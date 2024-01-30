@@ -9,7 +9,7 @@ const defaultUrl = process.env.VERCEL_URL
 export const metadata = {
   metadataBase: new URL(defaultUrl),
   title: "Eatsy",
-  description: "A recipe app that lets you find recipes",
+  description: "A recipe app that doesn't try to tell you its life story.",
 };
 
 export default function RootLayout({
