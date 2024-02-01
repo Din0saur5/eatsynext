@@ -1,9 +1,14 @@
 "use client";
-import React from "react";
 
 import "./modal.css";
 
-const Modal = ({ isOpen, onClose, content }) => {
+const Modal = ({
+  isOpen,
+  content,
+}: {
+  isOpen: boolean;
+  content: React.ReactNode;
+}) => {
   if (!isOpen) return null;
   return (
     <>

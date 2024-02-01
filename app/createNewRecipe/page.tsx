@@ -1,5 +1,6 @@
 import React from "react";
 import { Metadata } from "next";
+import RecipeForm from "@/components/RecipeForm";
 
 export const metadata: Metadata = {
   title: "Create New Recipe",
@@ -7,7 +8,12 @@ export const metadata: Metadata = {
 };
 
 const CreateNewRecipe = () => {
-  return <div>CreateNewRecipe</div>;
+  return (
+    <div>
+      <h1>Create New Recipe</h1>
+      <RecipeForm />
+    </div>
+  );
 };
 
 export default CreateNewRecipe;

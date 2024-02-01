@@ -4,17 +4,20 @@ import { Metadata } from "next";
 import { createClient } from "@supabase/supabase-js";
 import { Database } from "../../database.types";
 
+// Create a supabase client for interacting with the db, use Database to define the types
 const supabase = createClient<Database>(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
+//Get recipe_id from url param
 type Props = {
   params: {
     recipeId: string;
   };
 };
 
+//Generate page metadata
 export const generateMetadata = async ({
   params,
 }: Props): Promise<Metadata> => {
@@ -30,6 +33,7 @@ export const generateMetadata = async ({
   };
 };
 
+//Generate page
 const Recipe = async ({ params }: { params: { recipeId: string } }) => {
   const recipeResponse = await supabase
     .from("recipes")
@@ -43,27 +47,46 @@ const Recipe = async ({ params }: { params: { recipeId: string } }) => {
     .eq("recipe_id", params.recipeId);
   const reviews = await reviewsResponse.data;
 
-  const ingredientsResponse = await supabase
-    .from("ingredients")
-    .select("*")
-    .eq("recipe_id", params.recipeId);
-  const ingredients = await ingredientsResponse.data;
+  const ingredients = recipe?.ingredient_list;
+
   if (params.recipeId.length !== 36) {
     notFound();
   }
-  if (recipe && ingredients && reviews) {
+  if (!recipeResponse.error) {
     return (
       <div>
-        <h1>{recipe.name}</h1>
-        <p>{recipe.description}</p>
+        <h1>{recipe ? recipe.name : "Loading..."}</h1>
+        <p>{recipe ? recipe.description : "Loading..."}</p>
         <h2>Ingredients</h2>
-        <ul>
-          {ingredients.map(ingredient => (
-            <li key={ingredient.id}>{ingredient.text}</li>
-          ))}
+        <ul className="list-disc">
+          {ingredients
+            ? ingredients.map(ingredient => (
+                <li key={ingredient.food}>
+                  {ingredient.text
+                    ? ingredient.text
+                    : `${ingredient.quantity} ${ingredient.unit} ${ingredient.food}`}
+                </li>
+              ))
+            : ""}
         </ul>
+        {recipe?.steps ? (
+          <div>
+            <h2>Steps</h2>
+            <ol className="list-decimal">
+              {/* ALERT: Using list index for key. If implementing a feature in which 
+          the order could change during the lifetime of the component, this should be changed. */}
+              {recipe.steps.map((step, index) => (
+                <li key={index}>{step}</li>
+              ))}
+            </ol>
+          </div>
+        ) : (
+          ""
+        )}
       </div>
     );
+  } else {
+    return <div>Recipe not found</div>;
   }
 };
 
