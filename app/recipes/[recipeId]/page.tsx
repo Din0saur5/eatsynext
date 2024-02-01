@@ -25,7 +25,7 @@ export const generateMetadata = async ({
   const name = data?.[0].name;
   const description = data?.[0].description;
   return {
-    title: `Eatsy | ${name}`,
+    title: name,
     description: description,
   };
 };
@@ -48,7 +48,9 @@ const Recipe = async ({ params }: { params: { recipeId: string } }) => {
     .select("*")
     .eq("recipe_id", params.recipeId);
   const ingredients = await ingredientsResponse.data;
-
+  if (params.recipeId.length !== 36) {
+    notFound();
+  }
   if (recipe && ingredients && reviews) {
     return (
       <div>

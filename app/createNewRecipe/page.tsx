@@ -1,7 +1,8 @@
 import React from "react";
+import { Metadata } from "next";
 
-export const metadata = {
-  title: "Eatsy | Create New Recipe",
+export const metadata: Metadata = {
+  title: "Create New Recipe",
   description: "Use this page to upload a recipe of your own!",
 };
 

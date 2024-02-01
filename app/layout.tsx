@@ -1,14 +1,18 @@
 import { GeistSans } from "geist/font/sans";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
+import { Metadata } from "next";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : "http://localhost:3000";
 
-export const metadata = {
+export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
-  title: "Eatsy",
+  title: {
+    default: "Eatsy",
+    template: "%s | Eatsy",
+  },
   description: "A recipe app that doesn't try to tell you its life story.",
 };
 

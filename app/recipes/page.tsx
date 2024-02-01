@@ -1,7 +1,7 @@
 import React from "react";
 
 export const metadata = {
-  title: "Eatsy | Recipes",
+  title: "Recipes",
   description: "Search, filter, and explore our recipes.",
 };
 const Recipes = () => {
