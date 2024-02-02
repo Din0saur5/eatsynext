@@ -1,25 +1,62 @@
 "use client";
-import React from "react";
+import { useState, useEffect } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { createClient } from "../utils/supabase/client";
 
-const Navbar = () => {
+const Navbar = ({ session }: { session: Promise<boolean> }) => {
+  const router = useRouter();
+  const [loggedIn, setLoggedIn] = useState(false);
+  const supabase = createClient();
+
+  useEffect(() => {
+    (async () => {
+      setLoggedIn(await session);
+    })();
+  }, [session]);
+  const signOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error(error);
+    } else {
+      setLoggedIn(false);
+      router.push("/login");
+    }
+  };
   const pathname = usePathname();
-  const links = [
-    {
-      href: "/",
-      label: "Home",
-    },
-    {
-      href: "/login",
-      label: "Login",
-    },
-    {
-      href: "/recipes",
-      label: "Recipes",
-    },
-  ];
+  let links: { href: string; label: string }[] = [];
 
+  if (loggedIn) {
+    links = [
+      {
+        href: "/",
+        label: "Home",
+      },
+      {
+        href: "/dashboard",
+        label: "Dashboard",
+      },
+      {
+        href: "/recipes",
+        label: "Recipes",
+      },
+    ];
+  } else {
+    links = [
+      {
+        href: "/",
+        label: "Home",
+      },
+      {
+        href: "/login",
+        label: "Login",
+      },
+      {
+        href: "/recipes",
+        label: "Recipes",
+      },
+    ];
+  }
   return (
     <nav>
       <ul className="flex gap-4 mx-10">
@@ -37,6 +74,11 @@ const Navbar = () => {
             </Link>
           </li>
         ))}
+        {loggedIn ? (
+          <li>
+            <button onClick={signOut}>Sign Out</button>
+          </li>
+        ) : null}
       </ul>
     </nav>
   );
