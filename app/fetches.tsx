@@ -3,11 +3,15 @@ import { createClient } from '@supabase/supabase-js'
 import { Database } from './database.types'
 import { UUID } from 'crypto'
 
-const supabase = createClient<Database>(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY)
-
+if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
+    throw new Error("Missing SUPABASE_URL or SUPABASE_ANON_KEY environment variables");
+  }
+  
+  const supabase = createClient<Database>(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
+  
 
 //get the auth user table data from currently logged in user:
-const getLoggedInUser = async () => {  
+export const getLoggedInUser = async () => {  
     const { data, error } = await supabase.auth.getUser()
     if (error) {
         console.log('Error fetching user:', error.message)
@@ -17,48 +21,73 @@ const getLoggedInUser = async () => {
 }
 
 //change user email
-const { data, error } = await supabase.auth.updateUser({email: 'new@email.com'})
+export const changeUserEmail = (newEmail: string) => {
+    const { data, error } = await supabase.auth.updateUser({email: newEmail})
+    if (error) {
+        console.log('Error changing email:', error.message)
+    } else {
+        return data
+    }
+}
+
 //change user password
-const { data, error } = await supabase.auth.updateUser({password: 'new password'})
-//forgot password email and on return to app
-/**
- * Step 1: Send the user an email to get a password reset token.
- * This email contains a link which sends the user back to your application.
- */
-const { data, error } = await supabase.auth
-  .resetPasswordForEmail('user@email.com')
+export const changeUserPass = (newPass: string) => {
+    
+    const { data, error } = await supabase.auth.updateUser({password: newPass})
+    if (error) {
+        console.log('Error changing password:', error.message)
+    } else {
+        return data
+    }
+}
+// //forgot password email and on return to app
+// /**
+//  * Step 1: Send the user an email to get a password reset token.
+//  * This email contains a link which sends the user back to your application.
+//  */
+// const { data, error } = await supabase.auth
+//   .resetPasswordForEmail('user@email.com')
 
-/**
- * Step 2: Once the user is redirected back to your application,
- * ask the user to reset their password.
- */
- useEffect(() => {
-   supabase.auth.onAuthStateChange(async (event, session) => {
-     if (event == "PASSWORD_RECOVERY") {
-       const newPassword = prompt("What would you like your new password to be?");
-       const { data, error } = await supabase.auth
-         .updateUser({ password: newPassword })
+// /**
+//  * Step 2: Once the user is redirected back to your application,
+//  * ask the user to reset their password.
+//  */
+//  useEffect(() => {
+//    supabase.auth.onAuthStateChange(async (event, session) => {
+//      if (event == "PASSWORD_RECOVERY") {
+//        const newPassword = prompt("What would you like your new password to be?");
+//        const { data, error } = await supabase.auth
+//          .updateUser({ password: newPassword })
 
-       if (data) alert("Password updated successfully!")
-       if (error) alert("There was an error updating your password.")
-     }
-   })
- }, [])
+//        if (data) alert("Password updated successfully!")
+//        if (error) alert("There was an error updating your password.")
+//      }
+//    })
+//  }, [])
 
 //I think we should leave metadata alone for now, although it might seem good for ssot, i think it could be benifical to leave it alone 
 //because I like having the full control over the profile table and if we want to implement 3rd party auth the metadata gets filled with that stuff
 // but heres the fn anyway
-const { data, error } = await supabase.auth.updateUser({
-    data: { hello: 'world' }
-  })
+export const changeUserMetaData = (metadata: object) => {
+    
+    const { data, error } = await supabase.auth.updateUser({
+        data: metadata
+    })
+    if (error) {
+        console.log('Error changing password:', error.message)
+    } else {
+        return data
+    }
+
+  }
 
 //user by id get, patch, delete
 //get
-const getPublicUserById = async (id: UUID) => {
+export const getPublicUserById = async (id: UUID) => {
   
     
     const { data: userData, error } = await supabase
-    .from<Database>('users')
+    .from('users')
     .select('*')
     .eq('id', id)
     
@@ -73,7 +102,7 @@ const getPublicUserById = async (id: UUID) => {
 //patch
 const PatchUser = async (id: UUID, newUserObject: object) => {
     const { data, error } = await supabase
-    .from<Database>('users')
+    .from('users')
     .update({ 
         newUserObject
     })
@@ -102,7 +131,7 @@ const { data, error } = await supabase.auth.admin.deleteUser(
 //recipe query by n (ingredient, tag, title, meal type, cusinse type, rating, user) only return basic info name, rating, cook time, id, image, # of favorites
 
 // post recipe
-const PostRecipe = async () => {
+export const PostRecipe = async () => {
     const { data, error } = await supabase
     .from('countries')
     .insert({ id: 1, name: 'Denmark' })
@@ -116,9 +145,9 @@ const PostRecipe = async () => {
 
 //recipe by id get, patch, delete ()
 //get probably not going to be used as much as the one under it 
-const recipeById = async (id) => {
+export const recipeById = async (id: string) => {
     const { data: recipeData, error } = await supabase
-    .from<Database>('recipes')
+    .from('recipes')
     .select('*')
     .eq('id', id)
     .single()
