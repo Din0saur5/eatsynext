@@ -21,7 +21,7 @@ export const getLoggedInUser = async () => {
 }
 
 //change user email
-export const changeUserEmail = (newEmail: string) => {
+export const changeUserEmail = async (newEmail: string) => {
     const { data, error } = await supabase.auth.updateUser({email: newEmail})
     if (error) {
         console.log('Error changing email:', error.message)
@@ -31,7 +31,7 @@ export const changeUserEmail = (newEmail: string) => {
 }
 
 //change user password
-export const changeUserPass = (newPass: string) => {
+export const changeUserPass = async (newPass: string) => {
     
     const { data, error } = await supabase.auth.updateUser({password: newPass})
     if (error) {
@@ -68,7 +68,7 @@ export const changeUserPass = (newPass: string) => {
 //I think we should leave metadata alone for now, although it might seem good for ssot, i think it could be benifical to leave it alone 
 //because I like having the full control over the profile table and if we want to implement 3rd party auth the metadata gets filled with that stuff
 // but heres the fn anyway
-export const changeUserMetaData = (metadata: object) => {
+export const changeUserMetaData = async (metadata: object) => {
     
     const { data, error } = await supabase.auth.updateUser({
         data: metadata
@@ -100,24 +100,34 @@ export const getPublicUserById = async (id: UUID) => {
 }
 
 //patch
-const PatchUser = async (id: UUID, newUserObject: object) => {
-    const { data, error } = await supabase
-    .from('users')
-    .update({ 
-        newUserObject
-    })
-    .eq('id', id)
-    .select()
-    if (error) {
-        console.log('Error patching row:', error.message)
-    } else {
-        return data
-    }
+interface UserUpdateObject {
+    display_name?: string;
+    first_name?: string | null;
+    last_name?: string | null;
+    // Add other user properties as needed
 }
+
+export const PatchUser = async (id: string, newUserObject: UserUpdateObject) => {
+    const { data, error } = await supabase
+        .from('users')
+        .update({ 
+            ...newUserObject // Correctly spread the properties of newUserObject here
+        })
+        .eq('id', id)
+        .select();
+
+    if (error) {
+        console.log('Error patching row:', error.message);
+        return null; // Or handle the error as appropriate
+    } else {
+        return data;
+    }
+};
+
 //delete has to be done by request as it requires the servie_role key, has to stay on server, we will ahve to figure this out
-const { data, error } = await supabase.auth.admin.deleteUser(
-   user id
-  )
+// const { data, error } = await supabase.auth.admin.deleteUser(
+//    user id
+//   )
 
 
 //have to add rls to REVOKE or just check if user "exists"
@@ -160,10 +170,10 @@ export const recipeById = async (id: string) => {
 
 
 // get recipe with reviews  
-const recipeWithReviews = async (id) => {
+export const recipeWithReviews = async (id:string) => {
   
   const { data: recipeWithReviews, error } = await supabase
-    .from<Database>('recipes')
+    .from('recipes')
     .select('*, reviews(*)')
     .eq('id', id)
     .single()
@@ -175,10 +185,10 @@ const recipeWithReviews = async (id) => {
 }
 
 //update
-const { error } = await supabase
-  .from('countries')
-  .update({ name: 'Australia' })
-  .eq('id', 1)
+// const { error } = await supabase
+//   .from('countries')
+//   .update({ name: 'Australia' })
+//   .eq('id', 1)
 
 //review post
 
