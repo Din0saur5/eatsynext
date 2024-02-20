@@ -4,6 +4,14 @@ import { Metadata } from "next";
 import { createClient } from "@supabase/supabase-js";
 import { Database } from "../../database.types";
 
+type Ingredient = {
+  id: string;
+  food: string;
+  text: string;
+  unit: string;
+  quantity: number;
+};
+
 // Create a supabase client for interacting with the db, use Database to define the types
 const supabase = createClient<Database>(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -47,7 +55,7 @@ const Recipe = async ({ params }: { params: { recipeId: string } }) => {
     .eq("recipe_id", params.recipeId);
   const reviews = await reviewsResponse.data;
 
-  const ingredients = recipe?.ingredient_list;
+  const ingredients = recipe?.ingredient_list as Ingredient[];
 
   if (params.recipeId.length !== 36) {
     notFound();
@@ -59,15 +67,14 @@ const Recipe = async ({ params }: { params: { recipeId: string } }) => {
         <p>{recipe ? recipe.description : "Loading..."}</p>
         <h2>Ingredients</h2>
         <ul className="list-disc">
-          {ingredients
-            ? ingredients.map(ingredient => (
-                <li key={ingredient.food}>
-                  {ingredient.text
-                    ? ingredient.text
-                    : `${ingredient.quantity} ${ingredient.unit} ${ingredient.food}`}
-                </li>
-              ))
-            : ""}
+          {ingredients &&
+            ingredients.map(ingredient => (
+              <li key={ingredient.food}>
+                {ingredient.text
+                  ? ingredient.text
+                  : `${ingredient.quantity} ${ingredient.unit} ${ingredient.food}`}
+              </li>
+            ))}
         </ul>
         {recipe?.steps ? (
           <div>
