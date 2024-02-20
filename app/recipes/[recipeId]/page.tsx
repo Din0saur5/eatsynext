@@ -1,8 +1,9 @@
 import React from "react";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
-import { createClient } from "@supabase/supabase-js";
-import { Database } from "../../database.types";
+
+import Review from "./Review";
+import { recipeWithReviews } from "@/app/fetches";
 
 type Ingredient = {
   id: string;
@@ -11,12 +12,6 @@ type Ingredient = {
   unit: string;
   quantity: number;
 };
-
-// Create a supabase client for interacting with the db, use Database to define the types
-const supabase = createClient<Database>(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
 
 //Get recipe_id from url param
 type Props = {
@@ -29,38 +24,22 @@ type Props = {
 export const generateMetadata = async ({
   params,
 }: Props): Promise<Metadata> => {
-  const { data } = await supabase
-    .from("recipes")
-    .select("name,description")
-    .eq("id", params.recipeId);
-  const name = data?.[0].name;
-  const description = data?.[0].description;
+  const recipe = await recipeWithReviews(params.recipeId);
   return {
-    title: name,
-    description: description,
+    title: recipe?.name,
+    description: recipe?.description,
   };
 };
 
 //Generate page
 const Recipe = async ({ params }: { params: { recipeId: string } }) => {
-  const recipeResponse = await supabase
-    .from("recipes")
-    .select("*")
-    .eq("id", params.recipeId);
-  const recipe = await recipeResponse.data?.[0];
-
-  const reviewsResponse = await supabase
-    .from("reviews")
-    .select("*")
-    .eq("recipe_id", params.recipeId);
-  const reviews = await reviewsResponse.data;
-
+  const recipe = await recipeWithReviews(params.recipeId);
   const ingredients = recipe?.ingredient_list as Ingredient[];
 
   if (params.recipeId.length !== 36) {
     notFound();
   }
-  if (!recipeResponse.error) {
+  if (recipe) {
     return (
       <div>
         <h1>{recipe ? recipe.name : "Loading..."}</h1>
@@ -76,7 +55,7 @@ const Recipe = async ({ params }: { params: { recipeId: string } }) => {
               </li>
             ))}
         </ul>
-        {recipe?.steps ? (
+        {recipe?.steps && (
           <div>
             <h2>Steps</h2>
             <ol className="list-decimal">
@@ -87,9 +66,25 @@ const Recipe = async ({ params }: { params: { recipeId: string } }) => {
               ))}
             </ol>
           </div>
-        ) : (
-          ""
         )}
+        <div>
+          <h2>Reviews</h2>
+          {recipe.reviews?.length ? (
+            recipe.reviews.map(review => (
+              <div key={review.id}>
+                <Review
+                  title={review.title!}
+                  comment={review.comment}
+                  rating={review.rating!}
+                  created={review.created!}
+                  user_id={review.user_id!}
+                />
+              </div>
+            ))
+          ) : (
+            <p className="italic">None yet!</p>
+          )}
+        </div>
       </div>
     );
   } else {

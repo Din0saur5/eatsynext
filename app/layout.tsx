@@ -1,9 +1,10 @@
 import { GeistSans } from "geist/font/sans";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
 import { Metadata } from "next";
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
+
+import Navbar from "@/components/Navbar";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
