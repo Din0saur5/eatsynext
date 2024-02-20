@@ -15,18 +15,16 @@ const Review = async ({
 }) => {
   const reviewer = await getPublicUserById(user_id);
   const createdAt = new Date(created).toDateString();
-  if (reviewer) {
-    return (
-      <div>
-        <h4>{title}</h4>
-        <p>Rating: {rating}/5</p>
-        <p>
-          {createdAt} by {reviewer?.display_name}
-        </p>
-        <p>{comment}</p>
-      </div>
-    );
-  }
+  return (
+    <div>
+      <h4>{title}</h4>
+      <p>{"⭐".repeat(rating)}</p>
+      <p>{comment}</p>
+      <p>
+        {createdAt} by {reviewer?.display_name}
+      </p>
+    </div>
+  );
 };
 
 export default Review;

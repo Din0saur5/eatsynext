@@ -37,13 +37,17 @@ export default function RootLayout({
   return (
     <html lang="en" className={GeistSans.className}>
       <body className="bg-background text-foreground">
-        <header>
-          <Navbar session={session} />
-        </header>
-        <main className="min-h-screen flex flex-col items-center">
-          {children}
-        </main>
-        <footer>Copyright © 2024 Eatsy</footer>
+        <div className="min-h-screen flex flex-col">
+          <div className="flex-grow">
+            <header>
+              <Navbar session={session} />
+            </header>
+            <main className="max-w-xl mx-auto">{children}</main>
+          </div>
+          <footer className="text-center relative bottom:0">
+            Copyright © 2024 Eatsy
+          </footer>
+        </div>
       </body>
     </html>
   );
