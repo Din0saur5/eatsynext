@@ -6,7 +6,7 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       alembic_version: {
@@ -89,6 +89,7 @@ export interface Database {
       }
       recipes: {
         Row: {
+          avg_rating: number | null
           created: string | null
           cuisine: string | null
           description: string | null
@@ -99,6 +100,7 @@ export interface Database {
           is_draft: boolean | null
           meal_type: string | null
           name: string
+          search_index: unknown | null
           source: string | null
           steps: string[] | null
           tags: string[] | null
@@ -106,6 +108,7 @@ export interface Database {
           user_id: string | null
         }
         Insert: {
+          avg_rating?: number | null
           created?: string | null
           cuisine?: string | null
           description?: string | null
@@ -116,6 +119,7 @@ export interface Database {
           is_draft?: boolean | null
           meal_type?: string | null
           name: string
+          search_index?: unknown | null
           source?: string | null
           steps?: string[] | null
           tags?: string[] | null
@@ -123,6 +127,7 @@ export interface Database {
           user_id?: string | null
         }
         Update: {
+          avg_rating?: number | null
           created?: string | null
           cuisine?: string | null
           description?: string | null
@@ -133,6 +138,7 @@ export interface Database {
           is_draft?: boolean | null
           meal_type?: string | null
           name?: string
+          search_index?: unknown | null
           source?: string | null
           steps?: string[] | null
           tags?: string[] | null
@@ -258,7 +264,24 @@ export interface Database {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      calculate_average_rating: {
+        Args: {
+          recipe_id_param: string
+        }
+        Returns: undefined
+      }
+      generate_search_index: {
+        Args: {
+          name: string
+          description: string
+          tags: string[]
+          cuisine: string
+          meal_type: string
+          dish_type: string
+          source: string
+        }
+        Returns: unknown
+      }
     }
     Enums: {
       [_ in never]: never

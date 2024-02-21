@@ -155,22 +155,24 @@ export const PostRecipe = async () => {
 };
 
 //recipe by id get, patch, delete ()
-//get probably not going to be used as much as the one under it
-export const recipeById = async (id: string) => {
-  const { data: recipeData, error } = await supabase
-    .from("recipes")
-    .select("*")
-    .eq("id", id)
-    .single();
-  if (error) {
-    console.log("Error fetching row:", error.message);
-  } else {
-    return recipeData;
-  }
-};
+//get probably not going to be used as much as the one under it 
+export const fetchRecipeById = async (id: string) => {
+    const { data: recipeData, error } = await supabase
+    .from('recipes')
+    .select('*')
+    .eq('id', id)
+    .single()
+    if (error) {
+        console.log('Error fetching row:', error.message)
+    } else {
+        return recipeData
+    }
+}
 
-// get recipe with reviews
-export const recipeWithReviews = async (id: string) => {
+
+// get recipe with reviews  
+export const fetchRecipeWithReviews = async (id:string) => {
+  
   const { data: recipeWithReviews, error } = await supabase
     .from("recipes")
     .select("*, reviews(*)")
@@ -190,6 +192,50 @@ export const recipeWithReviews = async (id: string) => {
 //   .eq('id', 1)
 
 //review post
+type Review = {
+    rating: number;
+    title: string;
+    comment: string;
+    user_id: string;
+    recipe_id: string;
+};
+
+
+
+// postReview function with TypeScript typings
+export const postReview = async (review: Review) => {
+    // Insert the review
+    const { data, error } = await supabase
+        .from('reviews')
+        .insert([
+            { 
+                rating: review.rating,
+                title: review.title,
+                comment: review.comment,
+                user_id: review.user_id,
+                recipe_id: review.recipe_id
+            }
+        ]);
+
+    // Handle any error while posting the review
+    if (error) {
+        console.error('Error posting review:', error.message);
+        return { data: null, error };
+    }
+
+    // Call the calculate_average_rating function
+    const recipeIdParam = review.recipe_id;
+    const { error: rpcError } = await supabase.rpc('calculate_average_rating', { recipe_id_param: recipeIdParam });
+
+    // Handle any error from the RPC call
+    if (rpcError) {
+        console.error('Error calculating average rating:', rpcError.message);
+        return { data: null, error: rpcError };
+    }
+
+    // Return the review data if successful
+    return { data };
+};
 
 //review by id patch delete
 
@@ -213,3 +259,22 @@ export const recipeWithReviews = async (id: string) => {
 // AFTER INSERT OR UPDATE ON reviews
 // FOR EACH ROW
 // EXECUTE FUNCTION calculate_average_rating(NEW.recipe_id);
+
+
+//search functionality
+export async function searchRecipes(searchTerm: string): Promise<any[]> {
+    const { data: searchResults, error } = await supabase
+      .from('recipes')
+      .select('*')
+      .textSearch('search_index', searchTerm, {
+        config: 'english',
+        type: 'websearch' // or 'plain' depending on your needs
+      });
+  
+    if (error) {
+      console.error('Error searching recipes:', error.message);
+      throw error;
+    }
+  
+    return searchResults;
+  }
