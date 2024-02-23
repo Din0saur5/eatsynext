@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { Metadata } from "next";
 
 import Review from "./Review";
-import { recipeWithReviews } from "@/app/fetches";
+import { fetchRecipeWithReviews, fetchRecipeById } from "@/app/fetches";
 
 type Ingredient = {
   id: string;
@@ -24,7 +24,7 @@ type Props = {
 export const generateMetadata = async ({
   params,
 }: Props): Promise<Metadata> => {
-  const recipe = await recipeWithReviews(params.recipeId);
+  const recipe = await fetchRecipeById(params.recipeId);
   return {
     title: recipe?.name,
     description: recipe?.description,
@@ -33,7 +33,7 @@ export const generateMetadata = async ({
 
 //Generate page
 const Recipe = async ({ params }: { params: { recipeId: string } }) => {
-  const recipe = await recipeWithReviews(params.recipeId);
+  const recipe = await fetchRecipeWithReviews(params.recipeId);
   const ingredients = recipe?.ingredient_list as Ingredient[];
 
   if (params.recipeId.length !== 36) {
