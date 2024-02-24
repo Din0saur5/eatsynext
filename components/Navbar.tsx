@@ -40,6 +40,10 @@ const Navbar = ({ session }: { session: Promise<boolean> }) => {
         href: "/recipes",
         label: "Recipes",
       },
+      {
+        href: "/createNewRecipe",
+        label:"Create New Recipe"
+      },
     ];
   } else {
     links = [
