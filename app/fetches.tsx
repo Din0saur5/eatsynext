@@ -1,6 +1,9 @@
+"use server"
 import { createClient } from "@supabase/supabase-js";
 import { Database } from "./database.types";
-// import { UUID } from "crypto";
+import { cookies } from 'next/headers'
+
+
 
 if (
   !process.env.NEXT_PUBLIC_SUPABASE_URL ||
@@ -15,6 +18,7 @@ const supabase = createClient<Database>(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 );
+
 
 //get the auth user table data from currently logged in user:
 export const getLoggedInUser = async () => {
@@ -141,18 +145,6 @@ export const PatchUser = async (
 
 //recipe query by n (ingredient, tag, title, meal type, cusinse type, rating, user) only return basic info name, rating, cook time, id, image, # of favorites
 
-// post recipe
-export const PostRecipe = async () => {
-  const { data, error } = await supabase
-    .from("countries")
-    .insert({ id: 1, name: "Denmark" })
-    .select();
-  if (error) {
-    console.log("Error posting row:", error.message);
-  } else {
-    return data;
-  }
-};
 
 //recipe by id get, patch, delete ()
 //get probably not going to be used as much as the one under it
@@ -182,6 +174,35 @@ export const fetchRecipeWithReviews = async (id: string) => {
     return recipeWithReviews;
   }
 };
+
+//post recipe
+type Ingredient = {
+  food: string;
+  quantity: number;
+  unit: string;
+  text: string;
+};
+type Recipe = Database["public"]["Tables"]["recipes"]["Insert"] & {
+  ingredient_list: Ingredient[];
+};
+
+
+export const postRecipe = async (recipe:Recipe) => {
+const operation = recipe.id
+? supabase.from("recipes").update(recipe).eq("id", recipe.id)
+: supabase.from("recipes").insert([recipe]).select("id");
+
+const { data, error } = await operation;
+if (error) {
+  console.error("Error posting review:", error.message);
+  return { data: null, error };
+}
+else{
+  return { data }
+}
+
+}
+
 
 //update
 // const { error } = await supabase
@@ -272,4 +293,18 @@ export async function searchRecipes(searchTerm: string): Promise<any[]> {
   }
 
   return searchResults;
+}
+
+export async function getUserIdFromToken(){
+const cookieStore = cookies()
+  const userJ = cookieStore.get('sb-yhqlqbchshimjuykugsd-auth-token')
+ if (userJ){
+  const user = await JSON.parse(userJ.value)
+  
+  const id = await user.user.id
+ 
+  return id
+ } else{
+  
+ }
 }

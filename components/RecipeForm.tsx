@@ -1,10 +1,12 @@
 // components/RecipeForm.tsx
 "use client";
-import { Fragment, useState } from "react";
+
+import { Fragment, useEffect, useState } from "react";
 import { Database } from "../app/database.types";
-import { createClient } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import AutoCompleteInput from "./AutoComplete";
+import { PostgrestError } from "@supabase/supabase-js";
+ 
 
 type Ingredient = {
   food: string;
@@ -17,7 +19,18 @@ type Recipe = Database["public"]["Tables"]["recipes"]["Insert"] & {
 };
 interface RecipeFormProps {
   recipe?: Recipe;
+  user_id: any;
+  postRecipe: (recipe: Recipe) => Promise<{
+    data: null;
+    error: PostgrestError;
+} | {
+    data: {
+        id: string;
+    }[] | null;
+    error?: undefined;
+}>
 }
+
 
 const defaultRecipe: Recipe = {
   name: "",
@@ -33,39 +46,35 @@ const defaultRecipe: Recipe = {
 };
 
 //Create form component, get recipe prop from parent if editing, create blank recipe if not
-const RecipeForm = ({ recipe = defaultRecipe }: RecipeFormProps) => {
-  // Create a supabase client for interacting with the db, use Database to define the types
-  const supabase = createClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
-  const router = useRouter();
-  const [formData, setFormData] = useState<Recipe>(recipe);
+const RecipeForm = ({ recipe = defaultRecipe, user_id, postRecipe}: RecipeFormProps) => {
+ 
+
+
+  const [formData, setFormData] = useState<Recipe>({...recipe, user_id});
   const [tagInput, setTagInput] = useState('');
   const [newIngredient, setNewIngredient] = useState<Ingredient>({ food: '', quantity: 0, unit: '', text: '' });
   const [newStep, setNewStep] = useState('');
   const [imageError, setImageError] = useState(false);
-
+  const router = useRouter();
   const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  
 
 
   //If recipe exists, update it. If not, create it
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const operation = recipe.id
-      ? supabase.from("recipes").update(formData).eq("id", recipe.id)
-      : supabase.from("recipes").insert([formData]).select("id");
-
-    const { data, error } = await operation;
+    const {data, error} = await postRecipe(formData)
     if (error) {
       console.error(error);
       alert("An error occurred, please try again.");
-    } else {
+      } else {
       const redirectId = recipe.id || data![0].id;
       router.push(`/recipes/${redirectId}`);
-    }
+      }     
+      
   };
 
 

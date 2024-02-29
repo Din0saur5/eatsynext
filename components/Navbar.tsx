@@ -62,7 +62,10 @@ const Navbar = ({ session }: { session: Promise<boolean> }) => {
     ];
   }
   return (
-    <nav>
+    <nav className="navbar bg-base-100">
+      <div className="flex-1">
+      
+      </div>
       <ul className="flex gap-4 mx-10">
         {links.map(link => (
           <li key={link.href}>
