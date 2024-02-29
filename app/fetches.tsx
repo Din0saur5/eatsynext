@@ -1,3 +1,4 @@
+"use server";
 import { createClient } from "@supabase/supabase-js";
 import { Database } from "./database.types";
 // import { UUID } from "crypto";
@@ -257,14 +258,35 @@ export const postReview = async (review: Review) => {
 // EXECUTE FUNCTION calculate_average_rating(NEW.recipe_id);
 
 //search functionality
-export async function searchRecipes(searchTerm: string): Promise<any[]> {
-  const { data: searchResults, error } = await supabase
-    .from("recipes")
-    .select("*")
-    .textSearch("search_index", searchTerm, {
+export async function searchRecipes(
+  page: number,
+  filters: {
+    searchTerm: string | null;
+    tags: string | null;
+    meal_type: string | null;
+    cusinse: string | null;
+    dish_type: string | null;
+    user_id: string | null;
+  }
+) {
+  const { searchTerm, tags, meal_type, cusinse, dish_type, user_id } = filters;
+  let query = supabase.from("recipes").select("*");
+  if (user_id) query = query.eq("user_id", user_id);
+  if (meal_type) query = query.eq("meal_type", meal_type);
+  if (dish_type) query = query.eq("dish_type", dish_type);
+  if (cusinse) query = query.eq("cuisine", cusinse);
+  if (tags) query = query.eq("tags", tags);
+  if (searchTerm) {
+    query = query.textSearch("search_index", searchTerm, {
       config: "english",
       type: "websearch",
     });
+  }
+
+  const { data: searchResults, error } = await query.range(
+    (page - 1) * 20,
+    page * 20 - 1
+  );
 
   if (error) {
     console.error("Error searching recipes:", error.message);
@@ -272,4 +294,26 @@ export async function searchRecipes(searchTerm: string): Promise<any[]> {
   }
 
   return searchResults;
+}
+export async function getRecipeImageUrl(id: string) {
+  const { data: image, error } = await supabase
+    .from("recipes")
+    .select("image")
+    .eq("id", id)
+    .single();
+  if (error) {
+    console.error("Error fetching image:", error.message);
+    throw error;
+  }
+  if (image.image) {
+    const resp = await fetch(image.image);
+    if (resp.ok) {
+      return image.image;
+    } else {
+      return refreshImageUrl(id);
+    }
+  }
+}
+function refreshImageUrl(id: string) {
+  return "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Oops_Stop_Sign_icon.svg/640px-Oops_Stop_Sign_icon.svg.png";
 }
