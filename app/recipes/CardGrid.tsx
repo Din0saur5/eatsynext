@@ -21,7 +21,7 @@ const CardGrid = ({
     searchTerm: null,
     tags: null,
     meal_type: null,
-    cusinse: null,
+    cuisine: null,
     dish_type: null,
     user_id: null,
   });
@@ -61,7 +61,7 @@ const CardGrid = ({
     return () => observer.disconnect();
   }, [hasMore]);
   return (
-    <div>
+    <div className="absolute left-1/5 grid grid-cols-3 grid-flow-row gap-4">
       {items.map(recipe => (
         <RecipeCard
           key={recipe.id}

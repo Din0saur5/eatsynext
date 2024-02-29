@@ -13,10 +13,20 @@ const RecipeCard = ({
     getRecipeImageUrl(recipe.id).then(url => setImage(url));
   }, []);
   return (
-    <div>
-      <h4>{recipe.name}</h4>
-      <p>{recipe.description}</p>
-      {image && <img src={image} alt={recipe.name} />}
+    <div className="bg-orange-900 card w-96 bg-base-100 shadow-xl">
+      <figure>{image && <img src={image} alt={recipe.name} className="w-1/2 md:aspect-3/2 object-contain"/>}</figure>
+      <div className="card-body">
+        <h2 className="card-title">{recipe.name}</h2>
+        <p className="line-clamp-4">{recipe.description}</p>
+        <div className="card-actions justify-end">
+          {recipe.tags && recipe.tags.map((tag)=>{
+            return(
+              <div className="badge badge-outline">#{tag}</div> 
+            )
+
+          })}
+        </div>
+      </div>
     </div>
   );
 };

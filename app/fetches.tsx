@@ -279,22 +279,22 @@ export const postReview = async (review: Review) => {
 
 //search functionality
 export async function searchRecipes(
-  page: number,
+  page: number=1,
   filters: {
     searchTerm: string | null;
     tags: string | null;
     meal_type: string | null;
-    cusinse: string | null;
+    cuisine: string | null;
     dish_type: string | null;
     user_id: string | null;
   }
 ) {
-  const { searchTerm, tags, meal_type, cusinse, dish_type, user_id } = filters;
+  const { searchTerm, tags, meal_type, cuisine, dish_type, user_id } = filters;
   let query = supabase.from("recipes").select("*");
   if (user_id) query = query.eq("user_id", user_id);
   if (meal_type) query = query.eq("meal_type", meal_type);
   if (dish_type) query = query.eq("dish_type", dish_type);
-  if (cusinse) query = query.eq("cuisine", cusinse);
+  if (cuisine) query = query.eq("cuisine", cuisine);
   if (tags) query = query.eq("tags", tags);
   if (searchTerm) {
     query = query.textSearch("search_index", searchTerm, {
