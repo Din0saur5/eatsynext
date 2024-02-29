@@ -23,7 +23,7 @@ const RecipeCard = ({
             return(
               <div className="badge badge-outline">#{tag}</div> 
             )
-
+// maybe make a limit of 3 tags or something or at least limit how many get displayed 
           })}
         </div>
       </div>
