@@ -57,39 +57,10 @@ export type Database = {
           }
         ]
       }
-      ingredientsArchived: {
-        Row: {
-          created: string | null
-          food: string | null
-          id: string
-          quantity: number | null
-          recipe_id: string | null
-          text: string | null
-          unit: string | null
-        }
-        Insert: {
-          created?: string | null
-          food?: string | null
-          id?: string
-          quantity?: number | null
-          recipe_id?: string | null
-          text?: string | null
-          unit?: string | null
-        }
-        Update: {
-          created?: string | null
-          food?: string | null
-          id?: string
-          quantity?: number | null
-          recipe_id?: string | null
-          text?: string | null
-          unit?: string | null
-        }
-        Relationships: []
-      }
       recipes: {
         Row: {
           avg_rating: number | null
+          cautions: string[] | null
           created: string | null
           cuisine: string | null
           description: string | null
@@ -105,10 +76,12 @@ export type Database = {
           steps: string[] | null
           tags: string[] | null
           time: number | null
+          URI: string | null
           user_id: string | null
         }
         Insert: {
           avg_rating?: number | null
+          cautions?: string[] | null
           created?: string | null
           cuisine?: string | null
           description?: string | null
@@ -124,10 +97,12 @@ export type Database = {
           steps?: string[] | null
           tags?: string[] | null
           time?: number | null
+          URI?: string | null
           user_id?: string | null
         }
         Update: {
           avg_rating?: number | null
+          cautions?: string[] | null
           created?: string | null
           cuisine?: string | null
           description?: string | null
@@ -143,6 +118,7 @@ export type Database = {
           steps?: string[] | null
           tags?: string[] | null
           time?: number | null
+          URI?: string | null
           user_id?: string | null
         }
         Relationships: [
@@ -228,36 +204,6 @@ export type Database = {
             referencedColumns: ["id"]
           }
         ]
-      }
-      usersArchived: {
-        Row: {
-          _password_hash: string | null
-          created: string | null
-          email: string
-          first_name: string | null
-          id: string
-          last_name: string | null
-          username: string
-        }
-        Insert: {
-          _password_hash?: string | null
-          created?: string | null
-          email: string
-          first_name?: string | null
-          id?: string
-          last_name?: string | null
-          username: string
-        }
-        Update: {
-          _password_hash?: string | null
-          created?: string | null
-          email?: string
-          first_name?: string | null
-          id?: string
-          last_name?: string | null
-          username?: string
-        }
-        Relationships: []
       }
     }
     Views: {
