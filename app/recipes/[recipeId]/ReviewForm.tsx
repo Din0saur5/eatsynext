@@ -20,6 +20,8 @@ const ReviewForm = () => {
       <form onSubmit={handleSubmit}>
         <label htmlFor="title">Title:</label>
         <input
+          name="title"
+          id="title"
           type="text"
           value={formData.title}
           onChange={handleChange}
@@ -27,6 +29,8 @@ const ReviewForm = () => {
         />
         <label htmlFor="rating">Rating:</label>
         <input
+          name="rating"
+          id="rating"
           type="number"
           value={formData.rating}
           onChange={handleChange}
@@ -34,7 +38,7 @@ const ReviewForm = () => {
           min="1"
         />
         <label htmlFor="comment">Comment:</label>
-        <textarea value={formData.comment} onChange={handleChange} />
+        <textarea name="comment" id="comment" value={formData.comment} onChange={handleChange} />
         <button type="submit">Submit</button>
       </form>
     </div>

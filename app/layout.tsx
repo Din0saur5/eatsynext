@@ -42,7 +42,7 @@ export default function RootLayout({
             <header>
               <Navbar session={session} />
             </header>
-            <main className="max-w-xl mx-auto">{children}</main>
+            <main className="w-full md:w-11/12 lg:w-5/6 xl:w-3/4 mx-auto">{children}</main>
           </div>
           <footer className="text-center relative bottom:0">
             Copyright © 2024 Eatsy

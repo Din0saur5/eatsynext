@@ -61,7 +61,7 @@ const CardGrid = ({
     return () => observer.disconnect();
   }, [hasMore]);
   return (
-    <div className="absolute left-1/5 grid grid-cols-3 grid-flow-row gap-4">
+    <div className="grid grid-flow-row grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 justify-items-center">
       {items.map(recipe => (
         <RecipeCard
           key={recipe.id}

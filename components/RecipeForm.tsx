@@ -1,7 +1,7 @@
 // components/RecipeForm.tsx
 "use client";
 
-import { Fragment, useEffect, useState } from "react";
+import { useState } from "react";
 import { Database } from "../app/database.types";
 import { useRouter } from "next/navigation";
 import AutoCompleteInput from "./AutoComplete";
@@ -235,11 +235,12 @@ const RecipeForm = ({ recipe = defaultRecipe, user_id, postRecipe}: RecipeFormPr
     <div>
       <form onSubmit={onSubmit}>
         <div className="collapse collapse-arrow bg-base-200">
-          <input type="checkbox" name="my-accordion-2" defaultChecked />
+          <input title="Basic Recipe Info" type="checkbox" name="my-accordion-2" defaultChecked />
           <div className="collapse-title text-xl font-medium">
             Basic Recipe Info
           </div>
           <div className="collapse-content">
+            <label htmlFor="name" className="hidden">Name</label>
             <input
               className="rounded-lg mb-2 mr-1"
               type="text"
@@ -250,6 +251,7 @@ const RecipeForm = ({ recipe = defaultRecipe, user_id, postRecipe}: RecipeFormPr
               required
             />
             <div>
+              <label htmlFor="image" className="hidden">Image</label>
               <input
                 className="rounded-lg mb-2 mr-1"
                 type="text"
@@ -277,6 +279,7 @@ const RecipeForm = ({ recipe = defaultRecipe, user_id, postRecipe}: RecipeFormPr
                 Preview Image
               </button>
             </div>
+            <label htmlFor="time" className="hidden">Est. Cook Time</label>
             <input
               className="rounded-lg mb-2 mr-1"
               type="number"
@@ -323,7 +326,9 @@ const RecipeForm = ({ recipe = defaultRecipe, user_id, postRecipe}: RecipeFormPr
             <div className="max-w-md">
               <div className="mb-2 block"></div>
               <select
+                id="meal_type"
                 name="meal_type"
+                title="Meal Type"
                 value={formData.meal_type ?? ""}
                 onChange={e => onChange(e)}
                 required
@@ -340,9 +345,9 @@ const RecipeForm = ({ recipe = defaultRecipe, user_id, postRecipe}: RecipeFormPr
           </div>
         </div>
         <div className="collapse collapse-arrow bg-base-200">
-          <input type="checkbox" name="my-accordion-2" />
+          <input title="Description and Tags" type="checkbox" name="my-accordion-2" />
           <div className="collapse-title text-xl font-medium">
-            Description and Tags?
+            Description and Tags
           </div>
           <div className="collapse-content">
             <div className="flex flex-col">
@@ -382,8 +387,8 @@ const RecipeForm = ({ recipe = defaultRecipe, user_id, postRecipe}: RecipeFormPr
           </div>
         </div>
         <div className="collapse collapse-arrow bg-base-200">
-          <input type="checkbox" name="my-accordion-2" />
-          <div className="collapse-title text-xl font-medium">Ingredients?</div>
+          <input title="Ingredients" type="checkbox" name="my-accordion-2" />
+          <div className="collapse-title text-xl font-medium">Ingredients</div>
           <div className="collapse-content">
             {/* New ingredient inputs */}
             <input
@@ -451,7 +456,7 @@ const RecipeForm = ({ recipe = defaultRecipe, user_id, postRecipe}: RecipeFormPr
           </div>
         </div>
         <div className="collapse collapse-arrow bg-base-200">
-          <input type="checkbox" name="my-accordion-2" />
+          <input title="Steps" type="checkbox" name="my-accordion-2" />
           <div className="collapse-title text-xl font-medium">Steps?</div>
           <div className="collapse-content">
             <input
