@@ -182,9 +182,7 @@ type Ingredient = {
   unit: string;
   text: string;
 };
-type Recipe = Database["public"]["Tables"]["recipes"]["Insert"] & {
-  ingredient_list: Ingredient[];
-};
+type Recipe = Database["public"]["Tables"]["recipes"]["Insert"]
 
 
 export const postRecipe = async (recipe:Recipe) => {
@@ -337,8 +335,9 @@ export async function getRecipeImageUrl(id: string) {
 function refreshImageUrl(id: string) {
   return "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Oops_Stop_Sign_icon.svg/640px-Oops_Stop_Sign_icon.svg.png";
 }
-async function fetchRecipeFromEdamam(searchTerm: string){
-  const resp = await fetch(`https://api.edamam.com/api/recipes/v2?type=public&q=${searchTerm}&app_id=${process.env.EDAMAM_APP_ID}&app_key=${process.env.EDAMAM_APP_KEY}`)
+export async function fetchRecipeFromEdamam(uri: string){
+  const encodedUri = encodeURIComponent(uri);
+  const resp = await fetch(`https://api.edamam.com/api/recipes/v2/by-uri?type=public&uri=${encodedUri}&app_id=${process.env.EDAMAM_APP_ID}&app_key=${process.env.EDAMAM_APP_KEY}`)
   if (resp.ok){
     const data = await resp.json()
     return data

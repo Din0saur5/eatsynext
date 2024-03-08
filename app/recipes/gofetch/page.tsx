@@ -1,5 +1,5 @@
 import React from 'react'
-import {fetchTwentyRecipesFromEdamam, getRecipeImageUrl} from '../../fetches'
+import {fetchTwentyRecipesFromEdamam, getRecipeImageUrl, postRecipe} from '../../fetches'
 import { Database } from '@/app/database.types'
 import { randomUUID } from 'crypto'
 import RecipeCard from '../RecipeCard'
@@ -40,6 +40,11 @@ type EdamamRecipe = {
     dietLabels:string[],
     totalTime:number
 }
+function postRecipes(newRecipes: Database["public"]["Tables"]["recipes"]["Row"][]){
+    newRecipes.forEach((recipe)=>{
+        postRecipe(recipe)
+    })
+}
 const GoFetch = async () => {
     const searchTerm = 'chicken'
     const mealType = 'Breakfast'
@@ -71,7 +76,7 @@ const GoFetch = async () => {
             })
         }
     })
-  return(newRecipes.map(recipe=>recipe.name+", "))
+  return(<>{newRecipes.map(recipe=>recipe.name+", ")}</>)
     //return(<div>{newRecipes.map(recipe=><RecipeCard recipe={recipe} getRecipeImageUrl={getRecipeImageUrl} key={recipe.id}/>)}</div>)
 }
 
