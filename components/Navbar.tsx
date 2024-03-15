@@ -1,14 +1,25 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "../utils/supabase/client";
+import { ThemeContext } from "@/app/context/ThemeContext";
+import ThemeSwap from "./ThemeBtn";
 
 const Navbar = ({ session }: { session: Promise<boolean> }) => {
+  const { changeTheme } = useContext(ThemeContext); 
   const router = useRouter();
   const [loggedIn, setLoggedIn] = useState(false);
   const supabase = createClient();
   const [searchQuery,setSearchQuery] = useState('')
+
+  // const safeChangeTheme = () => {
+  //   if (changeTheme) {
+  //     changeTheme();
+  //   }
+  // };
+
+
   useEffect(() => {
     (async () => {
       setLoggedIn(await session);
@@ -42,6 +53,10 @@ const Navbar = ({ session }: { session: Promise<boolean> }) => {
         label: "Recipes",
       },
       {
+        href: "/settings",
+        label: 'Settings',
+      },
+      {
         href: "/createNewRecipe",
         label:"Create New Recipe"
       },
@@ -60,12 +75,19 @@ const Navbar = ({ session }: { session: Promise<boolean> }) => {
         href: "/recipes",
         label: "Recipes",
       },
+      {
+        href: "/settings",
+        label: 'Settings',
+      }
     ];
   }
   return (
     <div className="navbar bg-base-100">
       <div className="flex-1">
         <Link href={"/"} className="btn btn-ghost text-xl">Eatsy</Link>
+      </div>
+      <div className=" max-sm:hidden">
+      <ThemeSwap handleOnClick={changeTheme}/> 
       </div>
       <div className="flex-none gap-6">
         <div className="form-control flex-row">
