@@ -23,30 +23,36 @@ module.exports = {
       {
         light: {
   
-        "primary": "#F5E8D6",
+        "primary": "#15803d", //like
        
-        "secondary": "#228B22",
+        "secondary": "#453226", //like
        
-        "accent": "#E30B5D",
+        "accent": "#fda4af", //like
        
-        "neutral": "#4b5563",
+        "neutral": "#10b981", //probably like
        
-        "base-100": "#fda4af",
+        "base-100": "#F5E8D6", //like
        
-        "info": "#5C4033",
+        "info": "#0082d0", //like
        
-        "success": "#22c55e",
+        "success": "#00d985", //like
        
-        "warning": "#fbbf24",
+        "warning": "#ffa800", //like
        
-        "error": "#be123c",
+        "error": "#be123c", //like
         }
-      },'forest'
+      },{
+        forest: {
+          ...require("daisyui/src/theming/themes")["forest"],
+          "base-100": "281c14",
+          
+        }
+      },
   
       
   
     ], 
-    darkTheme: "forest", // name of one of the included themes for dark mode
+    darkTheme: "light", // name of one of the included themes for dark mode
     base: true, // applies background color and foreground color for root element by default
     styled: true, // include daisyUI colors and design decisions for all components
     utils: true, // adds responsive and modifier utility classes

@@ -15,7 +15,7 @@ const CreateNewRecipe = async () => {
   
   return (
     <div>
-      <h1>Create New Recipe</h1>
+      <h1 className="text-3xl mb-2">Create New Recipe!</h1>
       <RecipeForm user_id = {user_id} postRecipe={postRecipe}/>
     </div>
   );

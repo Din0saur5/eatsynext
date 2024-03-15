@@ -82,7 +82,7 @@ const Navbar = ({ session }: { session: Promise<boolean> }) => {
     ];
   }
   return (
-    <div className="navbar bg-base-100">
+    <div className="navbar bg-base-100 z-10">
       <div className="flex-1">
         <Link href={"/"} className="btn btn-ghost text-xl">Eatsy</Link>
       </div>

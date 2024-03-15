@@ -6,7 +6,7 @@ import { Database } from "../app/database.types";
 import { useRouter } from "next/navigation";
 import AutoCompleteInput from "./AutoComplete";
 import { PostgrestError } from "@supabase/supabase-js";
- 
+import { FaRegTrashAlt } from "react-icons/fa";
 
 type Ingredient = {
   food: string;
@@ -78,8 +78,13 @@ const RecipeForm = ({ recipe = defaultRecipe, user_id, postRecipe}: RecipeFormPr
   };
 
   const handleImageError = () => {
+    
     setImageError(true);
   };
+
+  const handleImageLoad = () =>{
+    setImageError(false);
+  }
 
   const cuisineTypes = [
     "american",
@@ -234,35 +239,37 @@ const RecipeForm = ({ recipe = defaultRecipe, user_id, postRecipe}: RecipeFormPr
   return (
     <div>
       <form onSubmit={onSubmit}>
-        <div className="collapse collapse-arrow bg-base-200">
+        <div className="collapse collapse-arrow bg-base-200 border border-secondary">
           <input title="Basic Recipe Info" type="checkbox" name="my-accordion-2" defaultChecked />
           <div className="collapse-title text-xl font-medium">
             Basic Recipe Info
           </div>
-          <div className="collapse-content">
+          <div className="collapse-content grid sm:grid-cols-2 gap-4">
+            <div>
             <label htmlFor="name" className="hidden">Name</label>
             <input
-              className="rounded-lg mb-2 mr-1"
+              className="border border-gray-400 rounded-lg mb-2 mr-1 p-1 px-2"
               type="text"
               name="name"
               value={formData.name}
               onChange={e => onChange(e)}
-              placeholder="Name"
+              placeholder="&ensp;Name"
               required
             />
+            </div>
             <div>
               <label htmlFor="image" className="hidden">Image</label>
               <input
-                className="rounded-lg mb-2 mr-1"
+                className="border border-gray-400 rounded-lg mb-2 mr-1 p-1 px-2"
                 type="text"
                 name="image"
                 value={formData.image ?? ""}
                 onChange={e => onChange(e)}
-                placeholder="Image URL"
+                placeholder="&ensp;Image URL"
                 required
               />
               <button
-                className="btn"
+                className="btn btn-outline btn-primary rounded-full"
                 onClick={() => {
                   const modal = document.getElementById(
                     "previewImg"
@@ -279,16 +286,19 @@ const RecipeForm = ({ recipe = defaultRecipe, user_id, postRecipe}: RecipeFormPr
                 Preview Image
               </button>
             </div>
-            <label htmlFor="time" className="hidden">Est. Cook Time</label>
+            <div>
+            <label htmlFor="time" className="ml-4 ">Est. Cook Time:</label>
+            <br/>
             <input
-              className="rounded-lg mb-2 mr-1"
+              className="border border-gray-400 rounded-lg mb-2 mr-1 p-1 px-2"
               type="number"
               name="time"
               value={formData.time ?? 0}
               onChange={e => onChange(e)}
-              placeholder="Est. Cook Time"
+              placeholder="&ensp;Est. Cook Time"
               required
             />
+            </div>
             <AutoCompleteInput
               dataSet={dishTypes}
               onSuggestionSelect={value =>
@@ -326,6 +336,7 @@ const RecipeForm = ({ recipe = defaultRecipe, user_id, postRecipe}: RecipeFormPr
             <div className="max-w-md">
               <div className="mb-2 block"></div>
               <select
+                className="border border-gray-400 rounded-lg mr-1 p-1 px-2"
                 id="meal_type"
                 name="meal_type"
                 title="Meal Type"
@@ -344,7 +355,7 @@ const RecipeForm = ({ recipe = defaultRecipe, user_id, postRecipe}: RecipeFormPr
             </div>
           </div>
         </div>
-        <div className="collapse collapse-arrow bg-base-200">
+        <div className="collapse collapse-arrow bg-base-200 border border-secondary">
           <input title="Description and Tags" type="checkbox" name="my-accordion-2" />
           <div className="collapse-title text-xl font-medium">
             Description and Tags
@@ -352,7 +363,7 @@ const RecipeForm = ({ recipe = defaultRecipe, user_id, postRecipe}: RecipeFormPr
           <div className="collapse-content">
             <div className="flex flex-col">
               <textarea
-                className="rounded-lg mb-2 mr-1"
+                className="border border-gray-400 rounded-lg mb-2 mr-1 p-1 px-2"
                 name="description"
                 value={formData.description ?? ""}
                 onChange={e => onChange(e)}
@@ -362,49 +373,65 @@ const RecipeForm = ({ recipe = defaultRecipe, user_id, postRecipe}: RecipeFormPr
               <label className="text-gray-500" htmlFor="tags">
                 add up to 5 tags for better searchability{" "}
               </label>
+              <div className="flex flex-row mb-2">
               <input
-                className="rounded-lg mb-2 mr-1"
+                className="border border-gray-400 rounded-lg mb-2 mr-1 p-1 px-2"
                 type="text"
                 name="tags"
                 value={tagInput}
                 onChange={e => setTagInput(e.target.value)}
                 placeholder="Tags"
               />
-              <button type="button" onClick={handleAddTag}>
+              <button className="btn btn-sm rounded-lg max-w-24 hover:border-primary" type="button" onClick={handleAddTag}>
                 Add Tag
               </button>
-              <div>
+              </div>
+              <div className="sm:flex sm:flex-row grid grid-cols-3 gap-4">
                 {(formData.tags ?? []).map((tag, index) => (
-                  <div key={index} className="tag">
-                    #{tag}
-                    <button type="button" onClick={() => handleRemoveTag(tag)}>
-                      Remove
+                  <div key={index} className="tag  badge badge-lg badge-outline badge-secondary pr-0.5">
+                   #{tag}&nbsp;
+                    
+                    <button type="button" className="badge badge-error badge-xs ml-1 p-1 py-2" onClick={() => handleRemoveTag(tag)}>
+                    <FaRegTrashAlt />
                     </button>
+                    
                   </div>
                 ))}
               </div>
             </div>
           </div>
         </div>
-        <div className="collapse collapse-arrow bg-base-200">
+        <div className="collapse collapse-arrow bg-base-200 border border-secondary">
           <input title="Ingredients" type="checkbox" name="my-accordion-2" />
           <div className="collapse-title text-xl font-medium">Ingredients</div>
-          <div className="collapse-content">
+          <div className="collapse-content flex flex-col sm:grid sm:grid-cols-2 gap-4">
             {/* New ingredient inputs */}
+<div>
+  <label htmlFor="name" className="hidden">Name</label>
             <input
               type="text"
+              className="border border-gray-400 rounded-lg mb-2 mr-1 p-1 px-2"
               name="food"
               value={newIngredient.food}
               onChange={handleNewIngredientChange}
               placeholder="Food"
             />
+</div>
+<div className="flex sm:flex-row flex-col">
+            <div> 
+            <label htmlFor="quantity" className="ml-4">Quantity:</label>
+            <br/>
             <input
               type="number"
+              className="border border-gray-400 rounded-lg mb-2 mr-1 p-1 px-2"
               name="quantity"
               value={newIngredient.quantity.toString()}
               onChange={handleNewIngredientChange}
               placeholder="Quantity"
             />
+            </div>
+            <div>
+              <br/>
             <AutoCompleteInput
               dataSet={cookingMeasurementUnits}
               onSuggestionSelect={value =>
@@ -421,15 +448,17 @@ const RecipeForm = ({ recipe = defaultRecipe, user_id, postRecipe}: RecipeFormPr
                 placeholder="Unit"
               />
             </AutoCompleteInput>
-
-            <input
-              type="text"
-              name="text"
-              value={newIngredient.text}
-              onChange={handleNewIngredientChange}
-              placeholder="Extra Details"
-            />
-            <button type="button" onClick={handleAddIngredient}>
+            </div>
+            </div>
+              <input
+                type="text"
+                className="border border-gray-400 rounded-lg mr-1 p-1 px-2"
+                name="text"
+                value={newIngredient.text}
+                onChange={handleNewIngredientChange}
+                placeholder="Extra Details"
+              />
+            <button className="btn btn-sm rounded-lg max-w-32 hover:border-primary" type="button" onClick={handleAddIngredient}>
               Add Ingredient
             </button>
 
@@ -445,38 +474,44 @@ const RecipeForm = ({ recipe = defaultRecipe, user_id, postRecipe}: RecipeFormPr
                     ing.food ?? ""
                   }: ${ing.text ?? ""}`}
                   <button
+                    className="badge badge-error badge-xs ml-1 p-1 py-2"
                     type="button"
                     onClick={() => handleRemoveIngredient(index)}
                   >
-                    Remove
+                    <FaRegTrashAlt />
                   </button>
                 </div>
               );
             })}
           </div>
         </div>
-        <div className="collapse collapse-arrow bg-base-200">
+        <div className="collapse collapse-arrow bg-base-200 border border-secondary">
           <input title="Steps" type="checkbox" name="my-accordion-2" />
-          <div className="collapse-title text-xl font-medium">Steps?</div>
+          <div className="collapse-title text-xl font-medium ">Steps</div>
           <div className="collapse-content">
-            <input
-              type="text"
+            <textarea
+              className="rounded-lg mb-2 mr-4 p-1 px-2 w-2/3"
               value={newStep}
               onChange={e => setNewStep(e.target.value)}
               placeholder="New Step"
             />
-            <button type="button" onClick={handleAddStep}>
+            <button className="btn btn-sm rounded-lg max-w-24 hover:border-primary" type="button" onClick={handleAddStep}>
               Add Step
             </button>
             {/* List of steps */}
+            <ul style={{'wordWrap':'break-word', 'overflowWrap':'break-word', 'wordBreak':'break-all' }} className="list-none max-w-2xl">
             {(formData.steps ?? []).map((step, index) => (
-              <div key={index}>
-                {`Step ${index + 1}: ${step}`}
-                <button type="button" onClick={() => handleRemoveStep(index)}>
-                  Remove
+              <li className="flex flex-row mb-2"  key={index}>
+               {`Step ${index + 1}: ${step}`}
+                <button
+                  type="button" 
+                  className="badge badge-error badge-xs ml-2 p-1 py-2"
+                  onClick={() => handleRemoveStep(index)}>
+                  <FaRegTrashAlt />
                 </button>
-              </div>
+                </li>
             ))}{" "}
+            </ul>
           </div>
         </div>
 
@@ -503,6 +538,7 @@ const RecipeForm = ({ recipe = defaultRecipe, user_id, postRecipe}: RecipeFormPr
           <img
             src={formData.image || "public/DefaultRecipeImg.png"}
             onError={handleImageError}
+            onLoad={handleImageLoad}
             alt="Recipe"
           />
           <div className="modal-action">

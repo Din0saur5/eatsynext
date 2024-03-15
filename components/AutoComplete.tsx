@@ -50,7 +50,7 @@ const AutoCompleteInput: React.FC<AutoCompleteInputProps> = ({
     <div className={`${placementClassName}`} >
       {inputElement}
       {showSuggestions && suggestions.length > 0 && (
-        <ul className={`fixed z-10 bg-white w-42 rounded mt-0 p-0 ${suggestionsClassName}`}>
+        <ul className={`relative sm:fixed z-10 bg-white w-42 rounded mt-0 p-0 ${suggestionsClassName}`}>
           {suggestions.map((suggestion, index) => (
             <li
               key={index}

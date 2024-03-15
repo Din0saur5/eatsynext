@@ -3,6 +3,7 @@ import { headers, cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { Metadata } from "next";
+import { Fragment } from "react";
 
 export const metadata: Metadata = {
   title: "Login",
@@ -60,10 +61,12 @@ export default function Login({
   };
 
   return (
-    <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
+    <div className="bg cover flex justify-center items-center mt-24">
+    <div className="card w-96 bg-base-100 border border-primary">
+
       <Link
         href="/"
-        className="absolute left-8 top-8 py-2 px-4 rounded-md no-underline text-foreground bg-btn-background hover:bg-btn-background-hover flex items-center group text-sm"
+        className="relative left-0 top-0 py-2 px-4 rounded-md no-underline text-foreground bg-btn-background hover:bg-btn-background-hover flex items-center group text-sm"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -81,6 +84,9 @@ export default function Login({
         </svg>{" "}
         Back
       </Link>
+      <div className="card-body">
+      
+    <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2">
 
       <form
         className="animate-in flex-1 flex flex-col w-full justify-center gap-2 text-foreground"
@@ -90,7 +96,7 @@ export default function Login({
           Email
         </label>
         <input
-          className="rounded-md px-4 py-2 bg-inherit border mb-6"
+          className="rounded-md px-4 py-2 bg-inherit border border-secondary mb-6"
           name="email"
           placeholder="you@example.com"
           required
@@ -99,18 +105,18 @@ export default function Login({
           Password
         </label>
         <input
-          className="rounded-md px-4 py-2 bg-inherit border mb-6"
+          className="rounded-md px-4 py-2 bg-inherit border border-secondary mb-6"
           type="password"
           name="password"
           placeholder="••••••••"
           required
         />
-        <button className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2">
+        <button className="btn btn-primary hover:shadow-inner hover:shadow-white  rounded-md px-4 py-2 mb-2 ">
           Sign In
         </button>
         <button
           formAction={signUp}
-          className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2"
+          className="btn btn-outline btn-secondary hover:shadow-inner hover:shadow-white rounded-md px-4 py-2 mb-2"
         >
           Sign Up
         </button>
@@ -120,6 +126,9 @@ export default function Login({
           </p>
         )}
       </form>
+    </div>
+    </div>
+    </div>
     </div>
   );
 }
