@@ -1,7 +1,8 @@
-import React from 'react'
-import {fetchTwentyRecipesFromEdamam, getRecipeImageUrl, postRecipe} from '../../fetches'
+'use client'
+import React, { useEffect } from 'react'
+import { useState } from 'react'
+import {fetchTwentyRecipesFromEdamam, batchPostRecipes} from '../../fetches'
 import { Database } from '@/app/database.types'
-import { randomUUID } from 'crypto'
 import RecipeCard from '../RecipeCard'
 
 type EdamamResp = {
@@ -40,21 +41,24 @@ type EdamamRecipe = {
     dietLabels:string[],
     totalTime:number
 }
-function postRecipes(newRecipes: Database["public"]["Tables"]["recipes"]["Row"][]){
-    newRecipes.forEach((recipe)=>{
-        postRecipe(recipe)
-    })
-}
-const GoFetch = async () => {
-    const searchTerm = 'chicken'
-    const mealType = 'Breakfast'
-    const newRecipes: Database["public"]["Tables"]["recipes"]["Row"][]=[]
-    const recipes: EdamamResp = await fetchTwentyRecipesFromEdamam(searchTerm, mealType)
-    recipes.hits.forEach((recipe:any) => {
+
+const GoFetch = () => {
+    const [searchTerm, setSearchTerm] = useState('chicken')
+    const [mealType, setMealType] = useState('Breakfast')
+    const [newRecipes, setNewRecipes] = useState<Database["public"]["Tables"]["recipes"]["Insert"][]>([]);
+    const [nextLink, setNextLink] = useState<string | null>(null)
+    useEffect(() => {
+        fetchRecipes()
+    }, [])
+    async function fetchRecipes(){
+        const recipes: EdamamResp = await fetchTwentyRecipesFromEdamam(searchTerm, mealType, nextLink)
+        if(recipes._links.next){
+            setNextLink(recipes._links.next.href)
+        }
+        recipes.hits.forEach((recipe:any) => {
         if (recipe.recipe){
             recipe = recipe.recipe as EdamamRecipe
-            newRecipes.push({
-                id: randomUUID(),
+            setNewRecipes(prevRecipes => [...prevRecipes, {
                 name: recipe.label,
                 source: recipe.url,
                 image: recipe.image,
@@ -72,11 +76,18 @@ const GoFetch = async () => {
                 is_draft: false,
                 search_index: null,
                 user_id: null,
-                steps: recipe.instructionLines
-            })
+                steps: recipe.instructionLines,
+            }]);
         }
-    })
-  return(<>{newRecipes.map(recipe=>recipe.name+", ")}</>)
+    })}
+  return(<div>
+    <div>
+      {newRecipes.map(recipe=>recipe.name+", ")}
+    </div>
+    <button className='btn btn-primary' onClick={fetchRecipes}>fetch more</button>
+    <button className='btn btn-secondary' onClick={() => batchPostRecipes(newRecipes)}>post new recipes</button>
+    </div>
+    )
     //return(<div>{newRecipes.map(recipe=><RecipeCard recipe={recipe} getRecipeImageUrl={getRecipeImageUrl} key={recipe.id}/>)}</div>)
 }
 

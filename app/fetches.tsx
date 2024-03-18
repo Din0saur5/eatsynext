@@ -345,8 +345,13 @@ export async function fetchRecipeFromEdamam(uri: string){
     return null
   }
 }
-export async function fetchTwentyRecipesFromEdamam(searchTerm: string, meal_type: string){
-  const resp = await fetch(`https://api.edamam.com/api/recipes/v2?type=public&q=${searchTerm}&app_id=${process.env.EDAMAM_APP_ID}&app_key=${process.env.EDAMAM_APP_KEY}&mealType=${meal_type}`)
+export async function fetchTwentyRecipesFromEdamam(searchTerm: string, meal_type: string, nextURL?: string | null){
+  let resp;
+  if(nextURL){
+    resp = await fetch(nextURL)
+  } else {
+    resp = await fetch(`https://api.edamam.com/api/recipes/v2?type=public&q=${searchTerm}&app_id=${process.env.EDAMAM_APP_ID}&app_key=${process.env.EDAMAM_APP_KEY}&mealType=${meal_type}`)
+  }
   if (resp.ok){
     const data = await resp.json()
     return data
@@ -367,4 +372,16 @@ const cookieStore = cookies()
  } else{
   
  }
+}
+
+export async function batchPostRecipes(Recipes:Recipe[]){
+  const operation = supabase.from("recipes").insert(Recipes).select("id",);
+  const { data, error } = await operation;
+  if (error) {
+    console.error("Error posting recipes:", error.message);
+    return { data: null, error };
+  }
+  else{
+    return { data }
+  }
 }
