@@ -2,7 +2,7 @@ import React from 'react'
 import {fetchTwentyRecipesFromEdamam, getRecipeImageUrl, postRecipe} from '../../fetches'
 import { Database } from '@/app/database.types'
 import { randomUUID } from 'crypto'
-import RecipeCard from '../RecipeCard'
+import RecipeCard from '../../../components/RecipeCard'
 
 type EdamamResp = {
     from:number,

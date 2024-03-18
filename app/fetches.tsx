@@ -277,30 +277,32 @@ export const postReview = async (review: Review) => {
 
 //search functionality
 export async function searchRecipes(
-  page: number=1,
+  page: number,
   filters: {
     searchTerm: string | null;
-    tags: string | null;
+    tags: string [] | null;
+    cautions: string [] | null;
     meal_type: string | null;
     cuisine: string | null;
     dish_type: string | null;
     user_id: string | null;
   }
 ) {
+  console.log(filters)
   const { searchTerm, tags, meal_type, cuisine, dish_type, user_id } = filters;
   let query = supabase.from("recipes").select("*");
-  if (user_id) query = query.eq("user_id", user_id);
-  if (meal_type) query = query.eq("meal_type", meal_type);
-  if (dish_type) query = query.eq("dish_type", dish_type);
-  if (cuisine) query = query.eq("cuisine", cuisine);
-  if (tags) query = query.eq("tags", tags);
   if (searchTerm) {
     query = query.textSearch("search_index", searchTerm, {
       config: "english",
       type: "websearch",
     });
   }
-
+  if (user_id) {query = query.eq("user_id", user_id);}
+  if (meal_type) {query = query.eq("meal_type", meal_type);}
+  if (dish_type) {query = query.eq("dish_type", dish_type);}
+  if (cuisine) {query = query.eq("cuisine", cuisine);}
+  if (tags) {query = query.eq("tags", tags);}
+  console.log(query)
   const { data: searchResults, error } = await query.range(
     (page - 1) * 20,
     page * 20 - 1

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Database } from "../database.types";
+import { Database } from "../app/database.types";
 
 const RecipeCard = ({
   recipe,

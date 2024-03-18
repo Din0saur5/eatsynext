@@ -92,7 +92,7 @@ const Navbar = ({ session }: { session: Promise<boolean> }) => {
       <div className="flex-none gap-6">
         <div className="form-control flex-row">
           <input onChange={(e)=>setSearchQuery(e.target.value)} type="text" placeholder="Search" className="input input-bordered w-24 md:w-auto md:min-w-96 focus:w-8/12"  />
-          <Link href={`/recipes/search/${searchQuery}`} className={`btn btn-ghost btn-circle ml-4 ${searchQuery!=''? 'visible': 'invisible'}`}>
+          <Link href={searchQuery !== ''? `/recipes/${searchQuery}` : '/recipes'} className={`btn btn-ghost btn-circle ml-4 ${searchQuery!=''? 'visible': 'invisible'}`}>
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
           </Link>
         </div>

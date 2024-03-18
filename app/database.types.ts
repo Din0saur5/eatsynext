@@ -220,6 +220,7 @@ export type Database = {
         Args: {
           name: string
           description: string
+          cautions: string[]
           tags: string[]
           cuisine: string
           meal_type: string
