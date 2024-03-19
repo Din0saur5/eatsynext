@@ -30,7 +30,7 @@ const Results = async ({ params }: { params: { query: string } }) => {
   return ( 
   <>
   
-  <div>Results for {params.query.replace(/%20/g, ' ')}:</div>
+  <div className="ml-2/5 mb-10">Showing results for {params.query.replace(/%20/g, ' ')}:</div>
   <CardGrid getRecipeImageUrl={getRecipeImageUrl} 
      param={{name: 'searchTerm', value: params.query.replace(/%20/g, ' ')}}
       />
