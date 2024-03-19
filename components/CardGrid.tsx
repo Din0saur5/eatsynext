@@ -120,14 +120,16 @@ const CardGrid = ({
   <div className="drawer-content flex flex-col items-center justify-center">
    
     <label htmlFor="my-drawer-2" className="btn btn-primary drawer-button lg:hidden ml-2 mb-12 mt-2">Filters</label>
-    <div className="sm:ml-24 grid grid-flow-row grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 justify-items-center">
+    <div className="sm:ml-24 grid grid-flow-row grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 min-[1850px]:grid-cols-4 gap-6 justify-items-center">
       {items.map(recipe => (
         <Link key={recipe.id} href={`/recipe/${recipe.id}`}>
+
           <RecipeCard
             
             recipe={recipe}
             getRecipeImageUrl={getRecipeImageUrl}
           />
+
         </Link>
       ))}
       {!hasMore && <h1>End of results</h1>}

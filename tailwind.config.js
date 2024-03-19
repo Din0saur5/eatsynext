@@ -7,6 +7,9 @@ module.exports = {
   
   theme: {
     extend: {
+      aspectRatio: {
+        'recipe-card': '9/16' 
+      },
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
