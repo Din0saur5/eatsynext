@@ -13,7 +13,7 @@ const RecipeCard = ({
     getRecipeImageUrl(recipe.id).then(url => setImage(url));
   }, []);
   return (
-    <div className="ease-in duration-300 card max-w-96 bg-base-100 shadow-lg shadow-neutral hover:scale-105 hover:shadow-xl border border-primary ">
+    <div className="ease-in duration-300 card max-w-96 bg-base-100 shadow-lg shadow-neutral hover:scale-105 hover:shadow-xl hover:border-primary border border-secondary ">
       <figure>{image && <img src={image} alt={recipe.name} className="w-1/2 md:aspect-3/2 object-contain"/>}</figure>
       <div className="card-body">
         <h2 className="card-title">{recipe.name}</h2>
