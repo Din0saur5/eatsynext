@@ -50,6 +50,9 @@ const CardGrid = ({
   const [page, setPage] = useState(1); // Current page
   const [hasMore, setHasMore] = useState(true); // If there are more items to load
   const [filters, setFilters] = useState(filterProps);
+  const [timeFilter, setTimeFilter] = useState(120)
+  const [ratingFilter, setRatingFilter] = useState(0)
+  const [mealFilter, setMealFilter] = useState('Any')
   async function fetchData() {
     if (isLoading || !hasMore) return;
 
@@ -112,6 +115,58 @@ const CardGrid = ({
   }, []);
 
   
+  const cuisineTypes = [
+    "american",
+    "asian",
+    "british",
+    "caribbean",
+    "central europe",
+    "chinese",
+    "eastern europe",
+    "french",
+    "greek",
+    "indian",
+    "italian",
+    "japanese",
+    "korean",
+    "kosher",
+    "mediterranean",
+    "mexican",
+    "middle eastern",
+    "nordic",
+    "south american",
+    "south east asian",
+    "world",
+  ];
+
+  const dishTypes = [
+    "soup",
+    "starter",
+    "desserts",
+    "main course",
+    "drinks",
+    "condiments and sauces",
+    "bread",
+    "salad",
+    "biscuits and cookies",
+    "sandwiches",
+    "cereals",
+  ];
+
+  //rating slider
+  const handleRatingSlider = (event:any) => {
+    setRatingFilter(event.target.value);
+  };
+  //time slider
+  const handleTimeSlider = (event:any) => {
+    setTimeFilter(event.target.value);
+  };
+  //meal select
+  const handleMealFilter = (event:any) => {
+    setMealFilter(event.target.value)
+  }
+  
+
   return (
     <>
    
@@ -144,59 +199,124 @@ const CardGrid = ({
       <li className="text-xl underline">Advanced filters:</li>
       <form>
         <div className="collapse collapse-arrow bg-base-200">
-        <input type="checkbox" name="my-accordion-2" defaultChecked /> 
+        <input type="checkbox" name="my-accordion-2" /> 
         <div className="collapse-title text-xl font-medium">
-          Click to open this one and close others
+          Food Sensitivities and Preferences
         </div>
-        <div className="collapse-content"> 
-          <p>hello</p>
+        <div className="collapse-content flex flex-col"> 
+        <label className="label cursor-pointer">
+    <span className="label-text">Vegitarian</span> 
+    <input type="checkbox" className="checkbox checkbox-primary" />
+  </label>
+  <label className="label cursor-pointer">
+    <span className="label-text">Gluten-Free</span> 
+    <input type="checkbox" className="checkbox checkbox-primary" />
+  </label>
+  <label className="label cursor-pointer">
+    <span className="label-text">Low-Sodium</span> 
+    <input type="checkbox" className="checkbox checkbox-primary" />
+  </label>
+  <label className="label cursor-pointer">
+    <span className="label-text">Quick-Bite</span> 
+    <input type="checkbox" className="checkbox checkbox-primary" />
+  </label>
+
         </div>
       </div>
       <div className="collapse collapse-arrow bg-base-200">
         <input type="checkbox" name="my-accordion-2" /> 
         <div className="collapse-title text-xl font-medium">
-          Click to open this one and close others
+          Cuisine Type
         </div>
-        <div className="collapse-content"> 
-          <p>hello</p>
-        </div>
-      </div>
-      <div className="collapse collapse-arrow bg-base-200">
-        <input type="checkbox" name="my-accordion-2" /> 
-        <div className="collapse-title text-xl font-medium">
-          Click to open this one and close others
-        </div>
-        <div className="collapse-content"> 
-          <p>hello</p>
+        <div className="collapse-content flex flex-col"> 
+          {cuisineTypes.map((cuisine)=>{
+            return(
+              <label className="label cursor-pointer">
+              <span className="label-text">{cuisine}</span> 
+              <input value={cuisine} type="radio" name="radio-10" className="radio radio-primary" />
+            </label>
+            )
+          })}
         </div>
       </div>
       <div className="collapse collapse-arrow bg-base-200">
         <input type="checkbox" name="my-accordion-2" /> 
         <div className="collapse-title text-xl font-medium">
-          Click to open this one and close others
+          Meal Time
         </div>
         <div className="collapse-content"> 
-          <p>hello</p>
+        <div>
+        <select
+                className="select select-primary w-full max-w-xs"
+                id="meal_type"
+                name="meal_type"
+                title="Meal Type"
+                value={mealFilter}
+                onChange={handleMealFilter}
+                required
+              >
+                <option className="text-white hover:text-blue-400">
+                  Any
+                </option>
+                <option>Breakfast</option>
+                <option>Lunch/Dinner</option>
+                <option>Teatime</option>
+                <option>Snack</option>
+              </select>
+            </div>
         </div>
       </div>
       <div className="collapse collapse-arrow bg-base-200">
         <input type="checkbox" name="my-accordion-2" /> 
         <div className="collapse-title text-xl font-medium">
-          Click to open this one and close others
+          Dish Type
         </div>
         <div className="collapse-content"> 
-          <p>hello</p>
+        {dishTypes.map((dish)=>{
+            return(
+              <label className="label cursor-pointer">
+              <span className="label-text">{dish}</span> 
+              <input value={dish} type="radio" name="radio-5" className="radio radio-primary" />
+            </label>
+            )
+          })}
         </div>
       </div>
       <div className="collapse collapse-arrow bg-base-200">
         <input type="checkbox" name="my-accordion-2" /> 
         <div className="collapse-title text-xl font-medium">
-          Click to open this one and close others
+          Time
         </div>
         <div className="collapse-content"> 
-          <p>hello</p>
+        <input  onChange={handleTimeSlider} type="range" min={0} max="120" value={timeFilter} className="range range-primary" step="20" />
+<div className="w-full flex justify-between text-xs px-2">
+  <span>&lt;20m</span>
+  <span>45m</span>
+  <span>1hr</span>
+  <span>90m</span>
+  <span>Any</span>
+</div>
         </div>
       </div>
+      <div className="collapse collapse-arrow bg-base-200">
+        <input type="checkbox" name="my-accordion-2" /> 
+        <div className="collapse-title text-xl font-medium">
+         Average Rating
+        </div>
+        <div className="collapse-content overflow-x-auto"> 
+        <input  onChange={handleRatingSlider} type="range" min={0} max="100" value={ratingFilter} className="range range-primary" step="20" />
+<div className="w-full flex justify-between text-xs px-2">
+  <span>Any</span>
+  <span>1+</span>
+  <span>2+</span>
+  <span>3+</span>
+  <span>4+</span>
+  <span>5</span>
+</div>
+        </div>
+      </div>
+      <br/>
+      <button type="submit" className="btn btn-success">Filter Results</button>
       </form>
     </ul>
   
