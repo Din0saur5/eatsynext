@@ -1,6 +1,3 @@
-"use client";
-import React, { useEffect } from "react";
-import { useState } from "react";
 import { fetchTwentyRecipesFromEdamam, batchPostRecipes } from "../../fetches";
 import { Database } from "@/app/database.types";
 
@@ -21,7 +18,7 @@ type EdamamResp = {
 type EdamamRecipe = {
   label: string;
   summary: string;
-  instructionLines: string[];
+  instructions: string[];
   uri: string;
   url: string;
   image: string;
@@ -42,55 +39,49 @@ type EdamamRecipe = {
 };
 
 const GoFetch = () => {
-  const [searchTerm, setSearchTerm] = useState("chicken");
-  const [mealType, setMealType] = useState("Breakfast");
-  const [newRecipes, setNewRecipes] = useState<
-    Database["public"]["Tables"]["recipes"]["Insert"][]
-  >([]);
-  const [nextLink, setNextLink] = useState<string | null>(null);
-  useEffect(() => {
-    fetchRecipes();
-  }, []);
+  const mealType = "";
+  const newRecipes: Database["public"]["Tables"]["recipes"]["Insert"][] = [];
+  let nextLink = "";
   async function fetchRecipes() {
-    setNewRecipes([]);
+    newRecipes.splice(0, newRecipes.length);
     const recipes: EdamamResp = await fetchTwentyRecipesFromEdamam(
-      searchTerm,
       mealType,
       nextLink
     );
     if (recipes._links.next) {
-      setNextLink(recipes._links.next.href);
+      nextLink = recipes._links.next.href;
     }
-    recipes.hits.forEach((recipe: any) => {
-      if (recipe.recipe) {
-        recipe = recipe.recipe as EdamamRecipe;
-        if (!newRecipes.find(r => r.URI == recipe.uri)) {
-          setNewRecipes(prevRecipes => [
-            ...prevRecipes,
-            {
-              name: recipe.label,
-              source: recipe.url,
-              image: recipe.image,
-              ingredient_list: recipe.ingredients,
-              cuisine: recipe.cuisine,
-              meal_type: recipe.mealType,
-              dish_type: recipe.dishType,
-              tags: [].concat(
-                recipe.tags,
-                recipe.healthLabels,
-                recipe.dietLabels
-              ),
-              time: recipe.totalTime,
-              cautions: recipe.cautions,
-              URI: recipe.uri,
-              avg_rating: null,
-              created: null,
-              description: recipe.summary,
-              is_draft: false,
-              user_id: null,
-              steps: recipe.instructionLines,
-            },
-          ]);
+    recipes.hits.forEach(hit => {
+      const recipe = hit.recipe;
+      if (recipe) {
+        if (
+          !newRecipes.find(r => r.URI == recipe.uri) &&
+          recipe.instructions &&
+          recipe.instructions.length > 0
+        ) {
+          newRecipes.push({
+            name: recipe.label,
+            source: recipe.url,
+            image: recipe.image,
+            ingredient_list: recipe.ingredients,
+            cuisine: recipe.cuisine,
+            meal_type: recipe.mealType,
+            dish_type: recipe.dishType,
+            tags: [
+              ...recipe.tags,
+              ...recipe.healthLabels,
+              ...recipe.dietLabels,
+            ],
+            time: recipe.totalTime,
+            cautions: recipe.cautions,
+            URI: recipe.uri,
+            avg_rating: null,
+            created: new Date().toUTCString(),
+            description: recipe.summary,
+            is_draft: false,
+            user_id: null,
+            steps: recipe.instructions,
+          });
         }
       }
     });

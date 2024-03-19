@@ -1,9 +1,7 @@
 "use server";
 import { createClient } from "@supabase/supabase-js";
 import { Database } from "./database.types";
-import { cookies } from 'next/headers'
-
-
+import { cookies } from "next/headers";
 
 if (
   !process.env.NEXT_PUBLIC_SUPABASE_URL ||
@@ -18,7 +16,6 @@ const supabase = createClient<Database>(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 );
-
 
 //get the auth user table data from currently logged in user:
 export const getLoggedInUser = async () => {
@@ -145,7 +142,6 @@ export const PatchUser = async (
 
 //recipe query by n (ingredient, tag, title, meal type, cusinse type, rating, user) only return basic info name, rating, cook time, id, image, # of favorites
 
-
 //recipe by id get, patch, delete ()
 //get probably not going to be used as much as the one under it
 export const fetchRecipeById = async (id: string) => {
@@ -182,25 +178,21 @@ type Ingredient = {
   unit: string;
   text: string;
 };
-type Recipe = Database["public"]["Tables"]["recipes"]["Insert"]
+type Recipe = Database["public"]["Tables"]["recipes"]["Insert"];
 
+export const postRecipe = async (recipe: Recipe) => {
+  const operation = recipe.id
+    ? supabase.from("recipes").update(recipe).eq("id", recipe.id)
+    : supabase.from("recipes").insert([recipe]).select("id");
 
-export const postRecipe = async (recipe:Recipe) => {
-const operation = recipe.id
-? supabase.from("recipes").update(recipe).eq("id", recipe.id)
-: supabase.from("recipes").insert([recipe]).select("id");
-
-const { data, error } = await operation;
-if (error) {
-  console.error("Error posting review:", error.message);
-  return { data: null, error };
-}
-else{
-  return { data }
-}
-
-}
-
+  const { data, error } = await operation;
+  if (error) {
+    console.error("Error posting review:", error.message);
+    return { data: null, error };
+  } else {
+    return { data };
+  }
+};
 
 //update
 // const { error } = await supabase
@@ -280,15 +272,15 @@ export async function searchRecipes(
   page: number,
   filters: {
     searchTerm: string | null;
-    tags: string [] | null;
-    cautions: string [] | null;
+    tags: string[] | null;
+    cautions: string[] | null;
     meal_type: string | null;
     cuisine: string | null;
     dish_type: string | null;
     user_id: string | null;
   }
 ) {
-  console.log(filters)
+  console.log(filters);
   const { searchTerm, tags, meal_type, cuisine, dish_type, user_id } = filters;
   let query = supabase.from("recipes").select("*");
   if (searchTerm) {
@@ -297,12 +289,22 @@ export async function searchRecipes(
       type: "websearch",
     });
   }
-  if (user_id) {query = query.eq("user_id", user_id);}
-  if (meal_type) {query = query.eq("meal_type", meal_type);}
-  if (dish_type) {query = query.eq("dish_type", dish_type);}
-  if (cuisine) {query = query.eq("cuisine", cuisine);}
-  if (tags) {query = query.eq("tags", tags);}
-  console.log(query)
+  if (user_id) {
+    query = query.eq("user_id", user_id);
+  }
+  if (meal_type) {
+    query = query.eq("meal_type", meal_type);
+  }
+  if (dish_type) {
+    query = query.eq("dish_type", dish_type);
+  }
+  if (cuisine) {
+    query = query.eq("cuisine", cuisine);
+  }
+  if (tags) {
+    query = query.eq("tags", tags);
+  }
+  console.log(query);
   const { data: searchResults, error } = await query.range(
     (page - 1) * 20,
     page * 20 - 1
@@ -337,53 +339,58 @@ export async function getRecipeImageUrl(id: string) {
 function refreshImageUrl(id: string) {
   return "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Oops_Stop_Sign_icon.svg/640px-Oops_Stop_Sign_icon.svg.png";
 }
-export async function fetchRecipeFromEdamam(uri: string){
+export async function fetchRecipeFromEdamam(uri: string) {
   const encodedUri = encodeURIComponent(uri);
-  const resp = await fetch(`https://api.edamam.com/api/recipes/v2/by-uri?type=public&uri=${encodedUri}&app_id=${process.env.EDAMAM_APP_ID}&app_key=${process.env.EDAMAM_APP_KEY}`)
-  if (resp.ok){
-    const data = await resp.json()
-    return data
-  } else{
-    return null
-  }
-}
-export async function fetchTwentyRecipesFromEdamam(searchTerm: string, meal_type: string, nextURL?: string | null){
-  let resp;
-  if(nextURL){
-    resp = await fetch(nextURL)
+  const resp = await fetch(
+    `https://api.edamam.com/api/recipes/v2/by-uri?type=public&uri=${encodedUri}&app_id=${process.env.EDAMAM_APP_ID}&app_key=${process.env.EDAMAM_APP_KEY}`
+  );
+  if (resp.ok) {
+    const data = await resp.json();
+    return data;
   } else {
-    resp = await fetch(`https://api.edamam.com/api/recipes/v2?type=public&q=${searchTerm}&app_id=${process.env.EDAMAM_APP_ID}&app_key=${process.env.EDAMAM_APP_KEY}&mealType=${meal_type}`)
+    return null;
   }
-  if (resp.ok){
-    const data = await resp.json()
-    return data
-  } else{
-    return null
+}
+export async function fetchTwentyRecipesFromEdamam(
+  meal_type: string,
+  nextURL?: string | null
+) {
+  let resp;
+  if (nextURL) {
+    resp = await fetch(nextURL);
+  } else {
+    resp = await fetch(
+      `https://api.edamam.com/api/recipes/v2?type=public&app_id=${process.env.EDAMAM_APP_ID}&app_key=${process.env.EDAMAM_APP_KEY}&mealType=${meal_type}`
+    );
+  }
+  if (resp.ok) {
+    const data = await resp.json();
+    return data;
+  } else {
+    return null;
   }
 }
 
-export async function getUserIdFromToken(){
-const cookieStore = cookies()
-  const userJ = cookieStore.get('sb-yhqlqbchshimjuykugsd-auth-token')
- if (userJ){
-  const user = await JSON.parse(userJ.value)
-  
-  const id = await user.user.id
- 
-  return id
- } else{
-  
- }
+export async function getUserIdFromToken() {
+  const cookieStore = cookies();
+  const userJ = cookieStore.get("sb-yhqlqbchshimjuykugsd-auth-token");
+  if (userJ) {
+    const user = await JSON.parse(userJ.value);
+
+    const id = await user.user.id;
+
+    return id;
+  } else {
+  }
 }
 
-export async function batchPostRecipes(Recipes:Recipe[]){
-  const operation = supabase.from("recipes").insert(Recipes).select("id",);
+export async function batchPostRecipes(Recipes: Recipe[]) {
+  const operation = supabase.from("recipes").insert(Recipes).select("id");
   const { data, error } = await operation;
   if (error) {
     console.error("Error posting recipes:", error.message);
     return { data: null, error };
-  }
-  else{
-    return { data }
+  } else {
+    return { data };
   }
 }
