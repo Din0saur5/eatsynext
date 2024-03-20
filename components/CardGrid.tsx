@@ -1,6 +1,6 @@
 "use client";
 import RecipeCard from "./RecipeCard";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SlArrowUp } from "react-icons/sl";
 import { searchRecipes } from "../app/fetches";
 import { Database } from "../app/database.types";
@@ -33,10 +33,10 @@ const CardGrid = ({
   getRecipeImageUrl: (id: string) => Promise<string | undefined>; param: gridType
 }) => {
   
-  const [tagsFilter, setTagsFilter] = useState([])
-  const [cautionsFilter, setCautionsFilter] = useState([])
-  const [cuisineFilter, setCuisineFilter] = useState('')
-  const [dishFilter, setDishFilter] = useState('')
+  const [tagsFilter, setTagsFilter] = useState([] as string[] )
+  const [cautionsFilter, setCautionsFilter] = useState([] as string[])
+  const [cuisineFilter, setCuisineFilter] = useState('any')
+  const [dishFilter, setDishFilter] = useState('any')
   const [timeFilter, setTimeFilter] = useState(120)
   const [ratingFilter, setRatingFilter] = useState(0)
   const [mealFilter, setMealFilter] = useState('Any')
@@ -47,13 +47,13 @@ const CardGrid = ({
     tags: tagsFilter.length === 0? null : tagsFilter,
     cautions: cautionsFilter.length===0? null : cautionsFilter,
     meal_type: mealFilter === 'Any'? null : mealFilter.toLowerCase(),
-    cuisine: cuisineFilter === ''? null : cuisineFilter.toLowerCase(),
-    dish_type: dishFilter === ''? null : dishFilter.toLowerCase(),
+    cuisine: cuisineFilter === 'any'? null : cuisineFilter.toLowerCase(),
+    dish_type: dishFilter === 'any'? null : dishFilter.toLowerCase(),
     time: timeFilter === 120? null: timeFilter,
     avg_rating: ratingFilter === 0? null: ratingFilter,
     user_id: (param && param.name == 'user_id')? param.value : null }
 
-    console.log(filterProps)
+  
   
 
   const [items, setItems] = useState(
@@ -126,6 +126,7 @@ const CardGrid = ({
 
   
   const cuisineTypes = [
+    "any",
     "american",
     "asian",
     "british",
@@ -150,6 +151,7 @@ const CardGrid = ({
   ];
 
   const dishTypes = [
+    "any",
     "soup",
     "starter",
     "desserts",
@@ -185,8 +187,8 @@ const handleAdvancedFilters = async (e: React.FormEvent<HTMLFormElement>) => {
     tags: tagsFilter.length === 0? null : tagsFilter,
     cautions: cautionsFilter.length === 0? null : cautionsFilter,
     meal_type: mealFilter === 'Any'? null : mealFilter.toLowerCase(),
-    cuisine: cuisineFilter === ''? null : cuisineFilter.toLowerCase(),
-    dish_type: dishFilter === ''? null : dishFilter.toLowerCase(),
+    cuisine: cuisineFilter === 'any' ? null : cuisineFilter.toLowerCase(),
+    dish_type: dishFilter === 'any'? null : dishFilter.toLowerCase(),
     time: timeFilter === 120? null: timeFilter,
     avg_rating: ratingFilter === 0? null: ratingFilter,
     user_id: (param && param.name == 'user_id')? param.value : null })
@@ -200,7 +202,31 @@ useEffect(()=>{
 
 },[filters])
 
+const handleCuisineChange = (event:React.ChangeEvent<HTMLInputElement>) => {
+  // Check if the radio button is checked
+  if (event.target.checked) {
+    // Update the state to the value of the checked radio button
+    setCuisineFilter(event.target.value);
+  }
+  
+};
+const handleDishChange = (event:React.ChangeEvent<HTMLInputElement>) => {
+  // Check if the radio button is checked
+  if (event.target.checked) {
+    // Update the state to the value of the checked radio button
+    setDishFilter(event.target.value);
+  }
+  
+};
 
+const handleCautions = (event:React.ChangeEvent<HTMLInputElement>) =>{
+  if (event.target.checked) {
+  setCautionsFilter(prev=>[...prev, event.target.value])
+
+  } else{
+    setCautionsFilter((prev)=> prev.filter((value)=>value !== event.target.value))
+  }
+}
 
   return (
     <>
@@ -241,20 +267,20 @@ useEffect(()=>{
         </div>
         <div className="collapse-content flex flex-col"> 
         <label className="label cursor-pointer">
-    <span className="label-text">Vegitarian</span> 
-    <input type="checkbox" className="checkbox checkbox-primary" />
+    <span className="label-text">Vegetarian</span> 
+    <input onChange={handleCautions} type="checkbox" value={'vegetarian'} className="checkbox checkbox-primary" />
   </label>
   <label className="label cursor-pointer">
     <span className="label-text">Gluten-Free</span> 
-    <input type="checkbox" className="checkbox checkbox-primary" />
+    <input onChange={handleCautions}  type="checkbox" value={'gluten-free'} className="checkbox checkbox-primary" />
   </label>
   <label className="label cursor-pointer">
-    <span className="label-text">Low-Sodium</span> 
-    <input type="checkbox" className="checkbox checkbox-primary" />
+    <span className="label-text">Dairy-Free</span> 
+    <input onChange={handleCautions}  type="checkbox" value={'dairy-free'} className="checkbox checkbox-primary" />
   </label>
   <label className="label cursor-pointer">
-    <span className="label-text">Quick-Bite</span> 
-    <input type="checkbox" className="checkbox checkbox-primary" />
+    <span className="label-text">Vegan</span> 
+    <input onChange={handleCautions} type="checkbox" value={'vegan'} className="checkbox checkbox-primary" />
   </label>
 
         </div>
@@ -269,7 +295,7 @@ useEffect(()=>{
             return(
               <label className="label cursor-pointer">
               <span className="label-text">{cuisine}</span> 
-              <input value={cuisine} type="radio" name="radio-10" className="radio radio-primary" />
+              <input onChange={handleCuisineChange} value={cuisine} type="radio" name="radio-10" className="radio radio-primary" />
             </label>
             )
           })}
@@ -313,7 +339,7 @@ useEffect(()=>{
             return(
               <label className="label cursor-pointer">
               <span className="label-text">{dish}</span> 
-              <input value={dish} type="radio" name="radio-5" className="radio radio-primary" />
+              <input onChange={handleDishChange}  value={dish} type="radio" name="radio-5" className="radio radio-primary" />
             </label>
             )
           })}

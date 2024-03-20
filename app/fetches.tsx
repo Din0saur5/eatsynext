@@ -307,10 +307,10 @@ export async function searchRecipes(
     query = query.eq("cuisine", cuisine);
   }
   if (cautions) {
-    query = query.in("cautions", [cautions]);
+    query = query.contains("cautions", [cautions]);
   }
   if (tags) {
-    query = query.in("tags", [tags]);
+    query = query.contains("tags", [tags]);
   }
   if (avg_rating){
     query = query.gte('avg_rating', avg_rating)
