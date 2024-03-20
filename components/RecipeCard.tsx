@@ -10,25 +10,14 @@ import Link from "next/link";
 
 const RecipeCard = ({
   recipe,
-  getRecipeImageUrl,
+
   user_id = null
 }: {
   recipe: Database["public"]["Tables"]["recipes"]["Row"];
-  getRecipeImageUrl: (id: string) => Promise<string | undefined>;
+
   user_id: string | null;
 }) => {
   const [image, setImage] = useState<string | undefined | null>(null);
- 
-
-
-  useEffect(() => {
-    getRecipeImageUrl(recipe.id).then(url => setImage(url));
-  }, [recipe.id, getRecipeImageUrl]);
-
-
- 
-
-
 
 
   return (

@@ -2,7 +2,7 @@
 import RecipeCard from "./RecipeCard";
 import React, { useEffect, useState } from "react";
 import { SlArrowUp } from "react-icons/sl";
-import { searchRecipes, getUserIdFromToken } from "../app/fetches";
+import { searchRecipes } from "../app/fetches";
 import { Database } from "../app/database.types";
 import { isJsxElement } from "typescript";
 import Link from "next/link";
@@ -32,9 +32,9 @@ type gridType = {
 
 
 const CardGrid = ({
-  getRecipeImageUrl, param, user_id
+   param, user_id
 }: {
-  getRecipeImageUrl: (id: string) => Promise<string | undefined>; param: gridType; user_id: string
+param: gridType; user_id: string
 }) => {
   const [tagsFilter, setTagsFilter] = useState([] as string[] )
   const [cautionsFilter, setCautionsFilter] = useState([] as string[])
@@ -257,7 +257,7 @@ return (
           key={recipe.id}
             user_id={user_id}
             recipe={recipe}
-            getRecipeImageUrl={getRecipeImageUrl}
+  
             />
 
 

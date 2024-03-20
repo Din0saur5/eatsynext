@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Metadata } from "next";
 import CardGrid from "@/components/CardGrid";
-import { getRecipeImageUrl, getUserIdFromToken } from "../../fetches";
+import { getUserIdFromToken } from "../../fetches";
 
 
 type Props = {
@@ -30,7 +30,7 @@ const Results = async ({ params }: { params: { query: string } }) => {
   <>
   
   <div className="ml-2/5 mb-10">Showing results for {params.query.replace(/%20/g, ' ')}:</div>
-  <CardGrid getRecipeImageUrl={getRecipeImageUrl} 
+  <CardGrid
     user_id={user_id}
      param={{name: 'searchTerm', value: params.query.replace(/%20/g, ' ')}} 
       />

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import CardGrid from "../../components/CardGrid";
-import { getRecipeImageUrl, getUserIdFromToken } from "../fetches";
+import { getUserIdFromToken } from "../fetches";
 export const metadata = {
   title: "Recipes",
   description: "Search, filter, and explore our recipes.",
@@ -14,7 +14,7 @@ const Recipes = async () => {
   return (
     <>
       <div>Recipes</div>
-      <CardGrid getRecipeImageUrl={getRecipeImageUrl} 
+      <CardGrid 
       param={null} user_id={user_id}
       />
     </>
