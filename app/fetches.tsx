@@ -277,17 +277,22 @@ export async function searchRecipes(
     meal_type: string | null;
     cuisine: string | null;
     dish_type: string | null;
+    time: number | null;
+    avg_rating: number | null;
     user_id: string | null;
   }
 ) {
   console.log(filters);
-  const { searchTerm, tags, meal_type, cuisine, dish_type, user_id } = filters;
+  const { searchTerm, cautions, tags, meal_type, cuisine, dish_type, time, avg_rating, user_id } = filters;
   let query = supabase.from("recipes").select("*");
   if (searchTerm) {
     query = query.textSearch("search_index", searchTerm, {
       config: "english",
       type: "websearch",
     });
+  }
+  if (user_id) {
+    query = query.eq("user_id", user_id);
   }
   if (user_id) {
     query = query.eq("user_id", user_id);
@@ -301,8 +306,17 @@ export async function searchRecipes(
   if (cuisine) {
     query = query.eq("cuisine", cuisine);
   }
+  if (cautions) {
+    query = query.in("cautions", [cautions]);
+  }
   if (tags) {
-    query = query.eq("tags", tags);
+    query = query.in("tags", [tags]);
+  }
+  if (avg_rating){
+    query = query.gte('avg_rating', avg_rating)
+  }
+  if (time){
+    query = query.lte('time', time)
   }
   console.log(query);
   const { data: searchResults, error } = await query.range(

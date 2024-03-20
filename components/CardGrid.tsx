@@ -8,13 +8,15 @@ import { isJsxElement } from "typescript";
 import Link from "next/link";
 
 type filterProps = {
-  searchTerm: string | null,
-  tags: string[] | null,
-  cautions: string [] | null,
-  meal_type: string | null,
-  cuisine: string | null,
-  dish_type: string | null,
-  user_id: string | null,
+  searchTerm: string | null;
+    tags: string[] | null;
+    cautions: string[] | null;
+    meal_type: string | null;
+    cuisine: string | null;
+    dish_type: string | null;
+    time: number | null;
+    avg_rating: number | null;
+    user_id: string | null;
 }
 
 type gridType = {
@@ -30,14 +32,25 @@ const CardGrid = ({
 }: {
   getRecipeImageUrl: (id: string) => Promise<string | undefined>; param: gridType
 }) => {
+  
+  const [tagsFilter, setTagsFilter] = useState([])
+  const [cautionsFilter, setCautionsFilter] = useState([])
+  const [cuisineFilter, setCuisineFilter] = useState('')
+  const [dishFilter, setDishFilter] = useState('')
+  const [timeFilter, setTimeFilter] = useState(120)
+  const [ratingFilter, setRatingFilter] = useState(0)
+  const [mealFilter, setMealFilter] = useState('Any')
+  const [advSearchLoad, setAdvSearchLoad] = useState(false)
 
   const filterProps : filterProps = {
     searchTerm: (param && param.name == 'searchTerm')? param.value : null,
-    tags: null,
-    cautions: null,
-    meal_type: null,
-    cuisine: null,
-    dish_type: null,
+    tags: tagsFilter.length === 0? null : tagsFilter,
+    cautions: cautionsFilter.length===0? null : cautionsFilter,
+    meal_type: mealFilter === 'Any'? null : mealFilter.toLowerCase(),
+    cuisine: cuisineFilter === ''? null : cuisineFilter.toLowerCase(),
+    dish_type: dishFilter === ''? null : dishFilter.toLowerCase(),
+    time: timeFilter === 120? null: timeFilter,
+    avg_rating: ratingFilter === 0? null: ratingFilter,
     user_id: (param && param.name == 'user_id')? param.value : null }
 
     console.log(filterProps)
@@ -50,16 +63,13 @@ const CardGrid = ({
   const [page, setPage] = useState(1); // Current page
   const [hasMore, setHasMore] = useState(true); // If there are more items to load
   const [filters, setFilters] = useState(filterProps);
-  const [timeFilter, setTimeFilter] = useState(120)
-  const [ratingFilter, setRatingFilter] = useState(0)
-  const [mealFilter, setMealFilter] = useState('Any')
   async function fetchData() {
     if (isLoading || !hasMore) return;
 
     setIsLoading(true);
 
     try {
-      console.log(page)
+      
       
       const data = await searchRecipes(page, filters);
       if(data.length>0){
@@ -155,7 +165,7 @@ const CardGrid = ({
 
   //rating slider
   const handleRatingSlider = (event:any) => {
-    setRatingFilter(event.target.value);
+    setRatingFilter(parseInt(event.target.value));
   };
   //time slider
   const handleTimeSlider = (event:any) => {
@@ -166,6 +176,31 @@ const CardGrid = ({
     setMealFilter(event.target.value)
   }
   
+//submit advanced filters
+const handleAdvancedFilters = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault()
+  setAdvSearchLoad(true)
+  setFilters({
+  searchTerm: (param && param.name == 'searchTerm')? param.value : null,
+    tags: tagsFilter.length === 0? null : tagsFilter,
+    cautions: cautionsFilter.length === 0? null : cautionsFilter,
+    meal_type: mealFilter === 'Any'? null : mealFilter.toLowerCase(),
+    cuisine: cuisineFilter === ''? null : cuisineFilter.toLowerCase(),
+    dish_type: dishFilter === ''? null : dishFilter.toLowerCase(),
+    time: timeFilter === 120? null: timeFilter,
+    avg_rating: ratingFilter === 0? null: ratingFilter,
+    user_id: (param && param.name == 'user_id')? param.value : null })
+    
+    setAdvSearchLoad(false)
+
+}
+useEffect(()=>{
+  setItems( [] as Database["public"]["Tables"]["recipes"]["Row"][])
+ setPage(1)
+
+},[filters])
+
+
 
   return (
     <>
@@ -187,17 +222,18 @@ const CardGrid = ({
 
         </Link>
       ))}
-      {!hasMore && <h1>End of results</h1>}
       {isLoading && <div>Loading...</div>}
       <div id="scroll-sentinel" />
     </div>
+      {!hasMore && <h1 className="mt-12">End of results</h1>}
   
   </div> 
   <div className="drawer-side">
     <label htmlFor="my-drawer-2" aria-label="close sidebar" className="drawer-overlay"></label> 
     <ul className=" shadow-inner dark:shadow-base-100 menu p-4 w-80 min-h-full bg-base-200 text-base-content">
       <li className="text-xl underline">Advanced filters:</li>
-      <form>
+      {advSearchLoad? <div>Loading...</div>: (
+      <form onSubmit={(e)=>handleAdvancedFilters(e)}>
         <div className="collapse collapse-arrow bg-base-200">
         <input type="checkbox" name="my-accordion-2" /> 
         <div className="collapse-title text-xl font-medium">
@@ -259,7 +295,8 @@ const CardGrid = ({
                   Any
                 </option>
                 <option>Breakfast</option>
-                <option>Lunch/Dinner</option>
+                <option>Lunch</option>
+                  <option>Dinner</option>
                 <option>Teatime</option>
                 <option>Snack</option>
               </select>
@@ -304,7 +341,7 @@ const CardGrid = ({
          Average Rating
         </div>
         <div className="collapse-content overflow-x-auto"> 
-        <input  onChange={handleRatingSlider} type="range" min={0} max="100" value={ratingFilter} className="range range-primary" step="20" />
+        <input  onChange={handleRatingSlider} type="range" min={0} max="5" value={ratingFilter} className="range range-primary" step="1" />
 <div className="w-full flex justify-between text-xs px-2">
   <span>Any</span>
   <span>1+</span>
@@ -318,6 +355,7 @@ const CardGrid = ({
       <br/>
       <button type="submit" className="btn btn-success">Filter Results</button>
       </form>
+      )}
     </ul>
   
   </div>
