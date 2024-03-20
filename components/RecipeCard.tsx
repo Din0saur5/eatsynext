@@ -4,7 +4,7 @@ import StarRating from "./StarRating";
 import { RiDraftLine } from "react-icons/ri";
 import LikeButton from "./LikeButton";
 import Link from "next/link";
-
+import { faker } from '@faker-js/faker';
 
 
 
@@ -17,7 +17,7 @@ const RecipeCard = ({
 
   user_id: string | null;
 }) => {
-  const [image, setImage] = useState<string | undefined | null>(null);
+  const [image, setImage] = useState(faker.image.urlLoremFlickr({ category: 'food' }));
 
 
   return (
@@ -49,7 +49,7 @@ const RecipeCard = ({
    
     }
     <Link href={`/recipe/${recipe.id}`}>
-      <figure>{image && <img src={image} alt={recipe.name} className="w-1/2 md:aspect-3/2 object-contain"/>}</figure>
+      <figure>{image && <img src={image} alt={recipe.name} className="w-2/3 mt-0 mb-0 md:aspect-square object-contain"/>}</figure>
       <div className="card-body">
         <h2 className={`card-title ${recipe.tags && recipe.tags.length>3? 'line-clamp-3':'line-clamp-4'} `}>{recipe.name}</h2>
           <StarRating rating={recipe.avg_rating}  totalStars={5}></StarRating>
