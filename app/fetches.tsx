@@ -317,59 +317,6 @@ export async function searchRecipes(
 
   return searchResults;
 }
-export async function getRecipeImageUrl(id: string) {
-  const { data: image, error } = await supabase
-    .from("recipes")
-    .select("image")
-    .eq("id", id)
-    .single();
-  if (error) {
-    console.error("Error fetching image:", error.message);
-    throw error;
-  }
-  if (image.image) {
-    const resp = await fetch(image.image);
-    if (resp.ok) {
-      return image.image;
-    } else {
-      return refreshImageUrl(id);
-    }
-  }
-}
-function refreshImageUrl(id: string) {
-  return "https://upload.wikimedia.org/wikipedia/commons/thumb/7/79/Oops_Stop_Sign_icon.svg/640px-Oops_Stop_Sign_icon.svg.png";
-}
-export async function fetchRecipeFromEdamam(uri: string) {
-  const encodedUri = encodeURIComponent(uri);
-  const resp = await fetch(
-    `https://api.edamam.com/api/recipes/v2/by-uri?type=public&uri=${encodedUri}&app_id=${process.env.EDAMAM_APP_ID}&app_key=${process.env.EDAMAM_APP_KEY}`
-  );
-  if (resp.ok) {
-    const data = await resp.json();
-    return data;
-  } else {
-    return null;
-  }
-}
-export async function fetchTwentyRecipesFromEdamam(
-  meal_type: string,
-  nextURL?: string | null
-) {
-  let resp;
-  if (nextURL) {
-    resp = await fetch(nextURL);
-  } else {
-    resp = await fetch(
-      `https://api.edamam.com/api/recipes/v2?type=public&app_id=${process.env.EDAMAM_APP_ID}&app_key=${process.env.EDAMAM_APP_KEY}&mealType=${meal_type}`
-    );
-  }
-  if (resp.ok) {
-    const data = await resp.json();
-    return data;
-  } else {
-    return null;
-  }
-}
 
 export async function getUserIdFromToken() {
   const cookieStore = cookies();
