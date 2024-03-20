@@ -7,6 +7,10 @@ module.exports = {
   
   theme: {
     extend: {
+      backgroundImage:{
+        'ribbon' : 'linear-gradient(270deg, #6A9A62, #4F7942 50%, #4F7942 51%,  #3B5F31 85%, #3fb648 90%, #003404 100% )',
+        'blue-ribbon' : ' linear-gradient(270deg, rgba(96,165,250,1) 0%, rgba(91,160,249,1) 22%, rgba(91,160,249,1) 31%, rgba(83,149,245,1) 54%, rgba(59,117,232,1) 67%, rgba(44,98,224,1) 75%, rgba(44,98,224,1) 83%, rgba(59,130,246,1) 90%, rgba(30,64,175,1) 100%)',
+      },
       aspectRatio: {
         'recipe-card': '9/16' 
       },

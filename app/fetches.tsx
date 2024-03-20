@@ -342,6 +342,7 @@ export async function getUserIdFromToken() {
 
     return id;
   } else {
+    return null
   }
 }
 
@@ -355,3 +356,58 @@ export async function batchPostRecipes(Recipes: Recipe[]) {
     return { data };
   }
 }
+
+
+
+export async function favoriteRecipe(recipe_id: string, user_id: string){
+  const { data, error } = await supabase
+  .from('favorites')
+  .select('*')
+  .eq('user_id', user_id)
+  .eq('recipe_id', recipe_id);
+
+if (error) {
+  console.error(error);
+  return;
+}
+
+if (data.length > 0) {
+  // Recipe is already a favorite, so delete the row
+  const { error: deleteError } = await supabase
+    .from('favorites')
+    .delete()
+    .eq('user_id', user_id)
+    .eq('recipe_id', recipe_id);
+
+  if (deleteError) {
+    console.error(deleteError);
+    return;
+  }
+} else {
+  // Recipe is not a favorite, so insert a new row
+  const { error: insertError } = await supabase
+    .from('favorites')
+    .insert({ user_id, recipe_id });
+
+  if (insertError) {
+    console.error(insertError);
+    return;
+  }
+}
+}
+
+export async function checkForFavs(user_id: string, recipe_id: string) {
+  const { data, error } = await supabase
+  .from('favorites')
+  .select('*')
+  .eq('user_id', user_id)
+  .eq('recipe_id', recipe_id);
+
+if (error) {
+  console.error(error);
+  return 
+}
+
+return (!!(data.length > 0))
+}
+
