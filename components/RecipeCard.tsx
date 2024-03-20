@@ -18,7 +18,7 @@ const RecipeCard = ({
     <div className=" overflow-y-clip h-[30rem]  ease-in duration-300 card  object-top  bg-base-100 shadow-lg shadow-neutral hover:scale-105 hover:shadow-xl hover:border-primary border border-secondary ">
       <figure>{image && <img src={image} alt={recipe.name} className="w-1/2 md:aspect-3/2 object-contain"/>}</figure>
       <div className="card-body">
-        <h2 className="card-title line-clamp-4">{recipe.name}</h2>
+        <h2 className={`card-title ${recipe.tags && recipe.tags.length>3? 'line-clamp-3':'line-clamp-4'} `}>{recipe.name}</h2>
           <StarRating rating={recipe.avg_rating}  totalStars={5}></StarRating>
         {/* <p className="line-clamp-4">{recipe.description}</p> */}
         <div className="card-actions justify-end">
