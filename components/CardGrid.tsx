@@ -270,8 +270,8 @@ return (
   </div>
   <div className="drawer-side">
     <label htmlFor="my-drawer-2" aria-label="close sidebar" className="drawer-overlay"></label>
-    <ul className=" shadow-inner dark:shadow-base-100 menu p-4 w-80 min-h-full bg-base-200 text-base-content">
-      <li className="text-xl underline">Advanced filters:</li>
+    <div className=" shadow-inner dark:shadow-base-100 menu p-4 w-80 min-h-full bg-base-200 text-base-content">
+      <h1 className="text-xl underline">Advanced filters:</h1>
       {advSearchLoad? <div>Loading...</div>: (
       <form onSubmit={(e)=>handleAdvancedFilters(e)}>
         <div className="collapse collapse-arrow bg-base-200">
@@ -308,7 +308,7 @@ return (
         <div className="collapse-content flex flex-col">
           {cuisineTypes.map((cuisine)=>{
             return(
-              <label className="label cursor-pointer">
+              <label key={cuisine} className="label cursor-pointer">
               <span className="label-text">{cuisine}</span>
               <input onChange={handleCuisineChange} value={cuisine} type="radio" name="radio-10" className="radio radio-primary" />
             </label>
@@ -352,7 +352,7 @@ return (
         <div className="collapse-content">
         {dishTypes.map((dish)=>{
             return(
-              <label className="label cursor-pointer">
+              <label key={dish} className="label cursor-pointer">
               <span className="label-text">{dish}</span>
               <input onChange={handleDishChange}  value={dish} type="radio" name="radio-5" className="radio radio-primary" />
             </label>
@@ -397,7 +397,7 @@ return (
       <button type="submit" className="btn btn-success">Filter Results</button>
       </form>
       )}
-    </ul>
+    </div>
  
   </div>
 </div>
