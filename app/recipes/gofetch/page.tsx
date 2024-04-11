@@ -49,7 +49,7 @@ const GoFetch = () => {
     );
     const recipes: spoonacularResponse = await resp.json();
     if (recipes.offset + recipes.number < recipes.totalResults) {
-      offset += recipes.number;
+      offset = recipes.offset + recipes.number;
     }
     recipes.results.forEach((recipe: spoonacularRecipe) => {
       if (recipe) {
