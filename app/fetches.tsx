@@ -280,11 +280,24 @@ export async function searchRecipes(
     time: number | null;
     avg_rating: number | null;
     user_id: string | null;
+    favorites_only: string | null;
   }
 ) {
   console.log(filters);
-  const { searchTerm, cautions, tags, meal_type, cuisine, dish_type, time, avg_rating, user_id } = filters;
+  const { searchTerm, cautions, tags, meal_type, cuisine, dish_type, time, avg_rating, user_id, favorites_only } = filters;
   let query = supabase.from("recipes").select("*");
+  if (favorites_only){ 
+    const { data: favorites, error } = await supabase.from("favorites").select("*").eq("user_id", favorites_only)
+    if (error) {
+      console.error("Error fetching favorite recipes:", error.message);
+      throw { data: null, error };
+    } else {
+     const favList = favorites && favorites.map(fav=>fav.recipe_id)
+    console.log(favorites)
+      query = query.in("id", favList)
+    }
+  }
+ 
   if (searchTerm) {
     query = query.textSearch("search_index", searchTerm, {
       config: "english",

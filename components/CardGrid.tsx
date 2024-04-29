@@ -18,6 +18,7 @@ type filterProps = {
     time: number | null;
     avg_rating: number | null;
     user_id: string | null;
+    favorites_only: string| null
 }
 
 
@@ -56,7 +57,8 @@ param: gridType; user_id: string
     dish_type: dishFilter === 'any'? null : dishFilter.toLowerCase(),
     time: timeFilter === 120? null: timeFilter,
     avg_rating: ratingFilter === 0? null: ratingFilter,
-    user_id: (param && param.name == 'user_id')? param.value : null }
+    user_id: (param && param.name == 'user_id')? param.value : null,
+    favorites_only: (param && param.name == 'favorites')? param.value : null }
    
    
    
@@ -202,8 +204,9 @@ const returnToTop = () => {
   dish_type: dishFilter === 'any'? null : dishFilter.toLowerCase(),
   time: timeFilter === 120? null: timeFilter,
   avg_rating: ratingFilter === 0? null: ratingFilter,
-  user_id: (param && param.name == 'user_id')? param.value : null })
- 
+  user_id: (param && param.name == 'user_id')? param.value : null,
+  favorites_only: (param && param.name == 'favorites')? param.value:null
+  })
   setAdvSearchLoad(false)
  
 }
