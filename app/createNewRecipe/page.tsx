@@ -1,7 +1,7 @@
 import React from "react";
 import { Metadata } from "next";
 import RecipeForm from "@/components/RecipeForm";
-import { getUserIdFromToken, postRecipe } from "../fetches"; 
+import { getUserIdFromToken, postRecipe } from "../fetches";
 
 
 export const metadata: Metadata = {
@@ -10,13 +10,13 @@ export const metadata: Metadata = {
 };
 
 const CreateNewRecipe = async () => {
-   
+
   const user_id = await getUserIdFromToken()
-  
+
   return (
     <div>
       <h1 className="text-3xl mb-2">Create New Recipe!</h1>
-      <RecipeForm user_id = {user_id} postRecipe={postRecipe}/>
+      <RecipeForm user_id={user_id} postRecipe={postRecipe} />
     </div>
   );
 };
