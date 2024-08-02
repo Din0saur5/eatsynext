@@ -8,14 +8,26 @@ interface ThemeContextType {
   changeTheme?: (nextTheme?: string) => void;
 }
 export const ThemeContext = createContext<ThemeContextType>({});
- 
+
 export const ThemeProvider = ({ children }: any) => {
+  const storageCheck = () => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem("theme")
+    }
+    else {
+      return "light"
+    }
+  }
+
+
   const [theme, setTheme] = useState<string>(
-    () => localStorage.getItem("theme") || "light"
+    () => storageCheck() || "light"
   );
 
   useEffect(() => {
-    localStorage.setItem("theme", theme);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem("theme", theme);
+    }
   }, [theme]);
 
   const changeTheme = (event?: any) => {
@@ -26,6 +38,7 @@ export const ThemeProvider = ({ children }: any) => {
       setTheme((prev) => (prev === "light" ? "dark" : "light"));
     }
   };
+
   return (
     <ThemeContext.Provider value={{ theme, changeTheme }}>
       {children}
